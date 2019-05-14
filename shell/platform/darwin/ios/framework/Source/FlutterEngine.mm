@@ -89,7 +89,7 @@
     _dartProject.reset([projectOrNil retain]);
 
   _pluginPublications = [NSMutableDictionary new];
-  _platformViewsController.reset(new flutter::FlutterPlatformViewsController());
+  _platformViewsController.reset(nullptr);
 
   [self setupChannels];
 
@@ -400,7 +400,7 @@
   } else {
     [self setupChannels];
     if (!_platformViewsController) {
-      _platformViewsController.reset(new flutter::FlutterPlatformViewsController());
+      _platformViewsController.reset(new flutter::FlutterPlatformViewsController(_shell->GetTaskRunners()));
     }
     _publisher.reset([[FlutterObservatoryPublisher alloc] init]);
     [self maybeSetupPlatformViewChannels];

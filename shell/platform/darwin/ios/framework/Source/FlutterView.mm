@@ -88,7 +88,8 @@ id<FlutterViewEngineDelegate> _delegate;
 }
 
 - (std::unique_ptr<flutter::IOSSurface>)createSurface:
-    (std::shared_ptr<flutter::IOSGLContext>)context {
+    (std::shared_ptr<flutter::IOSGLContext>)context 
+    withTaskRunners:(flutter::TaskRunners)task_runners {
   if ([self.layer isKindOfClass:[CAEAGLLayer class]]) {
     fml::scoped_nsobject<CAEAGLLayer> eagl_layer(
         reinterpret_cast<CAEAGLLayer*>([self.layer retain]));
@@ -102,7 +103,7 @@ id<FlutterViewEngineDelegate> _delegate;
       }
     }
     return std::make_unique<flutter::IOSSurfaceGL>(context, std::move(eagl_layer),
-                                                   [_delegate platformViewsController]);
+                                                   [_delegate platformViewsController], task_runners);
   }
 #if FLUTTER_SHELL_ENABLE_METAL
   else if ([self.layer isKindOfClass:[CAMetalLayer class]]) {
