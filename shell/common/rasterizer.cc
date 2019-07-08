@@ -252,7 +252,7 @@ RasterStatus Rasterizer::DrawToSurface(flutter::LayerTree& layer_tree) {
 
   auto compositor_frame = compositor_context_->AcquireFrame(
       surface_->GetContext(), canvas, external_view_embedder,
-      surface_->GetRootTransformation(), true);
+      surface_->GetRootTransformation(), true, task_runner_merger_);
 
   if (compositor_frame) {
     RasterStatus raster_status = compositor_frame->Raster(layer_tree, false);
@@ -293,7 +293,7 @@ static sk_sp<SkData> ScreenshotLayerTreeAsPicture(
   // https://github.com/flutter/flutter/issues/23435
   auto frame = compositor_context.AcquireFrame(
       nullptr, recorder.getRecordingCanvas(), nullptr,
-      root_surface_transformation, false);
+      root_surface_transformation, false, nullptr);
 
   frame->Raster(*tree, true);
 
@@ -343,8 +343,9 @@ static sk_sp<SkData> ScreenshotLayerTreeAsImage(
   SkMatrix root_surface_transformation;
   root_surface_transformation.reset();
 
-  auto frame = compositor_context.AcquireFrame(
-      surface_context, canvas, nullptr, root_surface_transformation, false);
+  auto frame = compositor_context.AcquireFrame(surface_context, canvas, nullptr,
+                                               root_surface_transformation,
+                                               false, nullptr);
   canvas->clear(SK_ColorTRANSPARENT);
   frame->Raster(*tree, true);
   canvas->flush();

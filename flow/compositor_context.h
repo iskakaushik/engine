@@ -13,6 +13,7 @@
 #include "flutter/flow/raster_cache.h"
 #include "flutter/flow/texture.h"
 #include "flutter/fml/macros.h"
+#include "flutter/shell/common/task_runner_merger.h"
 #include "third_party/skia/include/core/SkCanvas.h"
 #include "third_party/skia/include/core/SkPictureRecorder.h"
 
@@ -31,7 +32,8 @@ class CompositorContext {
                 SkCanvas* canvas,
                 ExternalViewEmbedder* view_embedder,
                 const SkMatrix& root_surface_transformation,
-                bool instrumentation_enabled);
+                bool instrumentation_enabled,
+                fml::RefPtr<TaskRunnerMerger> task_runner_merger);
 
     virtual ~ScopedFrame();
 
@@ -57,6 +59,7 @@ class CompositorContext {
     ExternalViewEmbedder* view_embedder_;
     const SkMatrix& root_surface_transformation_;
     const bool instrumentation_enabled_;
+    fml::RefPtr<TaskRunnerMerger> task_runner_merger_;
 
     FML_DISALLOW_COPY_AND_ASSIGN(ScopedFrame);
   };
@@ -70,7 +73,8 @@ class CompositorContext {
       SkCanvas* canvas,
       ExternalViewEmbedder* view_embedder,
       const SkMatrix& root_surface_transformation,
-      bool instrumentation_enabled);
+      bool instrumentation_enabled,
+      fml::RefPtr<TaskRunnerMerger> task_runner_merger);
 
   void OnGrContextCreated();
 
