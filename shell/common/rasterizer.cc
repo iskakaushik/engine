@@ -44,7 +44,8 @@ Rasterizer::Rasterizer(
       task_runners_(std::move(task_runners)),
       compositor_context_(std::move(compositor_context)),
       user_override_resource_cache_bytes_(false),
-      weak_factory_(this) {
+      weak_factory_(this),
+      task_runner_merger_(fml::MakeRefCounted<TaskRunnerMerger>(task_runners)) {
   FML_DCHECK(compositor_context_);
 }
 
