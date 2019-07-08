@@ -86,8 +86,6 @@ source_set("common") {
     "surface.h",
     "switches.cc",
     "switches.h",
-    "task_runner_merger.cc",
-    "task_runner_merger.h",
     "thread_host.cc",
     "thread_host.h",
     "vsync_waiter.cc",

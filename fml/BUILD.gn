@@ -66,6 +66,8 @@ source_set("fml") {
     "synchronization/waitable_event.h",
     "task_runner.cc",
     "task_runner.h",
+    "task_runner_merger.cc",
+    "task_runner_merger.h",
     "thread.cc",
     "thread.h",
     "thread_local.cc",

@@ -17,7 +17,7 @@
 #include "flutter/lib/ui/snapshot_delegate.h"
 #include "flutter/shell/common/pipeline.h"
 #include "flutter/shell/common/surface.h"
-#include "flutter/shell/common/task_runner_merger.h"
+#include "flutter/fml/task_runner_merger.h"
 
 namespace flutter {
 
@@ -110,7 +110,7 @@ class Rasterizer final : public SnapshotDelegate {
   fml::closure next_frame_callback_;
   bool user_override_resource_cache_bytes_;
   fml::WeakPtrFactory<Rasterizer> weak_factory_;
-  fml::RefPtr<TaskRunnerMerger> task_runner_merger_;
+  fml::RefPtr<fml::TaskRunnerMerger> task_runner_merger_;
 
   // |SnapshotDelegate|
   sk_sp<SkImage> MakeRasterSnapshot(sk_sp<SkPicture> picture,

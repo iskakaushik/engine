@@ -35,7 +35,7 @@ std::unique_ptr<CompositorContext::ScopedFrame> CompositorContext::AcquireFrame(
     ExternalViewEmbedder* view_embedder,
     const SkMatrix& root_surface_transformation,
     bool instrumentation_enabled,
-    fml::RefPtr<TaskRunnerMerger> task_runner_merger) {
+    fml::RefPtr<fml::TaskRunnerMerger> task_runner_merger) {
   return std::make_unique<ScopedFrame>(*this, gr_context, canvas, view_embedder,
                                        root_surface_transformation,
                                        instrumentation_enabled,
@@ -49,7 +49,7 @@ CompositorContext::ScopedFrame::ScopedFrame(
     ExternalViewEmbedder* view_embedder,
     const SkMatrix& root_surface_transformation,
     bool instrumentation_enabled,
-    fml::RefPtr<TaskRunnerMerger> task_runner_merger)
+    fml::RefPtr<fml::TaskRunnerMerger> task_runner_merger)
     : context_(context),
       gr_context_(gr_context),
       canvas_(canvas),
@@ -68,6 +68,22 @@ RasterStatus CompositorContext::ScopedFrame::Raster(
     flutter::LayerTree& layer_tree,
     bool ignore_raster_cache) {
   layer_tree.Preroll(*this, ignore_raster_cache);
+  if (view_embedder_) {
+    const bool uiviews_mutated = view_embedder_->HasPendingViewOperations();
+    if (uiviews_mutated) {
+      bool are_merged = task_runner_merger_->AreMerged();
+      // TODO(iskakaushik): make lease term a constant.
+      if (are_merged) {
+        task_runner_merger_->ExtendLease(10);
+      } else {
+        view_embedder_->CancelFrame();
+        task_runner_merger_->MergeWithLease(10);
+        return RasterStatus::kResubmit;
+      }
+    } else {
+      task_runner_merger_->DecrementLease();
+    }
+  }
   // Clearing canvas after preroll reduces one render target switch when preroll
   // paints some raster cache.
   if (canvas()) {

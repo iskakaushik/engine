@@ -2,14 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "flutter/shell/common/task_runner_merger.h"
+#include "flutter/fml/task_runner_merger.h"
 
-namespace flutter {
+namespace fml {
 
-TaskRunnerMerger::TaskRunnerMerger(TaskRunners task_runners)
-    : task_queues_(fml::MessageLoopTaskQueues::GetInstance()), lease_term_(-1) {
-  platform_queue_id_ = task_runners.GetPlatformTaskRunner()->GetTaskQueueId();
-  gpu_queue_id_ = task_runners.GetGPUTaskRunner()->GetTaskQueueId();
+TaskRunnerMerger::TaskRunnerMerger(fml::TaskQueueId platform_queue_id,
+                                   fml::TaskQueueId gpu_queue_id)
+    : platform_queue_id_(platform_queue_id),
+      gpu_queue_id_(gpu_queue_id),
+      task_queues_(fml::MessageLoopTaskQueues::GetInstance()),
+      lease_term_(-1) {
   is_merged_ = task_queues_->Owns(platform_queue_id_, gpu_queue_id_);
 }
 
@@ -51,4 +53,4 @@ void TaskRunnerMerger::DecrementLease() {
   }
 }
 
-}  // namespace flutter
+}  // namespace fml

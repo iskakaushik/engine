@@ -44,9 +44,11 @@ Rasterizer::Rasterizer(
       task_runners_(std::move(task_runners)),
       compositor_context_(std::move(compositor_context)),
       user_override_resource_cache_bytes_(false),
-      weak_factory_(this),
-      task_runner_merger_(fml::MakeRefCounted<TaskRunnerMerger>(task_runners)) {
+      weak_factory_(this) {
   FML_DCHECK(compositor_context_);
+  const auto platform_id = task_runners.GetPlatformTaskRunner()->GetTaskQueueId();
+  const auto gpu_id = task_runners.GetGPUTaskRunner()->GetTaskQueueId();
+  task_runner_merger_ = fml::MakeRefCounted<fml::TaskRunnerMerger>(platform_id, gpu_id);
 }
 
 Rasterizer::~Rasterizer() = default;
