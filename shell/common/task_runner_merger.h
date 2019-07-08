@@ -14,9 +14,13 @@ namespace flutter {
 
 class TaskRunnerMerger : public fml::RefCountedThreadSafe<TaskRunnerMerger> {
  public:
-  void MergeGpuToPlatformAndResetUnmergeTimer(size_t frames_till_unmerge);
+  void MergeWithLease(size_t lease_term);
 
-  void SubmitFrame();
+  void ExtendLease(size_t lease_term);
+
+  void DecrementLease();
+
+  bool AreMerged() const;
 
   explicit TaskRunnerMerger(TaskRunners task_runners);
 
@@ -24,7 +28,7 @@ class TaskRunnerMerger : public fml::RefCountedThreadSafe<TaskRunnerMerger> {
   fml::TaskQueueId platform_queue_id_;
   fml::TaskQueueId gpu_queue_id_;
   fml::RefPtr<fml::MessageLoopTaskQueues> task_queues_;
-  std::atomic_int num_frames_till_unmerge_;
+  std::atomic_int lease_term_;
   bool is_merged_;
 
   FML_DISALLOW_COPY_AND_ASSIGN(TaskRunnerMerger);

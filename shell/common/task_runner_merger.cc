@@ -6,36 +6,46 @@
 
 namespace flutter {
 
-// TODO(iskakaushik): "-1" signals that unmerge has not been
-// scheduled. Make it a constant or a flag.
 TaskRunnerMerger::TaskRunnerMerger(TaskRunners task_runners)
-    : task_queues_(fml::MessageLoopTaskQueues::GetInstance()),
-      num_frames_till_unmerge_(-1) {
+    : task_queues_(fml::MessageLoopTaskQueues::GetInstance()), lease_term_(-1) {
   platform_queue_id_ = task_runners.GetPlatformTaskRunner()->GetTaskQueueId();
   gpu_queue_id_ = task_runners.GetGPUTaskRunner()->GetTaskQueueId();
   is_merged_ = task_queues_->Owns(platform_queue_id_, gpu_queue_id_);
 }
 
-void TaskRunnerMerger::MergeGpuToPlatformAndResetUnmergeTimer(
-    size_t frames_till_unmerge) {
-  num_frames_till_unmerge_ = frames_till_unmerge;
+void TaskRunnerMerger::MergeWithLease(size_t lease_term) {
+  FML_DCHECK(lease_term > 0) << "lease_term should be positive.";
   if (!is_merged_) {
     is_merged_ = task_queues_->Merge(platform_queue_id_, gpu_queue_id_);
+    lease_term_ = lease_term;
   }
 }
 
-void TaskRunnerMerger::SubmitFrame() {
+void TaskRunnerMerger::ExtendLease(size_t lease_term) {
+  FML_DCHECK(lease_term > 0) << "lease_term should be positive.";
+  if ((int)lease_term > lease_term_) {
+    lease_term_ = lease_term;
+  }
+}
+
+bool TaskRunnerMerger::AreMerged() const {
+  return is_merged_;
+}
+
+void TaskRunnerMerger::DecrementLease() {
   if (!is_merged_) {
     return;
   }
 
   // we haven't been set to merge.
-  if (num_frames_till_unmerge_ == -1) {
+  if (lease_term_ == -1) {
     return;
   }
 
-  num_frames_till_unmerge_--;
-  if (num_frames_till_unmerge_ == 0) {
+  FML_DCHECK(lease_term_ > 0)
+      << "lease_term should always be positive when merged.";
+  lease_term_--;
+  if (lease_term_ == 0) {
     bool success = task_queues_->Unmerge(platform_queue_id_);
     is_merged_ = !success;
   }
