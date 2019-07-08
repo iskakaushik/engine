@@ -21,7 +21,8 @@ class TaskRunnerMerger : public fml::RefCountedThreadSafe<TaskRunnerMerger> {
 
   bool AreMerged() const;
 
-  TaskRunnerMerger(fml::TaskQueueId platform_queue_id, fml::TaskQueueId gpu_queue_id);
+  TaskRunnerMerger(fml::TaskQueueId platform_queue_id,
+                   fml::TaskQueueId gpu_queue_id);
 
  private:
   fml::TaskQueueId platform_queue_id_;

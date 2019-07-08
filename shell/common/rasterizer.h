@@ -14,10 +14,10 @@
 #include "flutter/fml/closure.h"
 #include "flutter/fml/memory/weak_ptr.h"
 #include "flutter/fml/synchronization/waitable_event.h"
+#include "flutter/fml/task_runner_merger.h"
 #include "flutter/lib/ui/snapshot_delegate.h"
 #include "flutter/shell/common/pipeline.h"
 #include "flutter/shell/common/surface.h"
-#include "flutter/fml/task_runner_merger.h"
 
 namespace flutter {
 

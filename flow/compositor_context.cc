@@ -36,10 +36,9 @@ std::unique_ptr<CompositorContext::ScopedFrame> CompositorContext::AcquireFrame(
     const SkMatrix& root_surface_transformation,
     bool instrumentation_enabled,
     fml::RefPtr<fml::TaskRunnerMerger> task_runner_merger) {
-  return std::make_unique<ScopedFrame>(*this, gr_context, canvas, view_embedder,
-                                       root_surface_transformation,
-                                       instrumentation_enabled,
-                                       task_runner_merger);
+  return std::make_unique<ScopedFrame>(
+      *this, gr_context, canvas, view_embedder, root_surface_transformation,
+      instrumentation_enabled, task_runner_merger);
 }
 
 CompositorContext::ScopedFrame::ScopedFrame(
