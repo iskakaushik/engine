@@ -22,7 +22,7 @@ class TaskRunnerMerger : public fml::RefCountedThreadSafe<TaskRunnerMerger> {
 
   bool AreMerged() const;
 
-  explicit TaskRunnerMerger(TaskRunners task_runners);
+  TaskRunnerMerger(TaskRunners task_runners);
 
  private:
   fml::TaskQueueId platform_queue_id_;
@@ -31,6 +31,8 @@ class TaskRunnerMerger : public fml::RefCountedThreadSafe<TaskRunnerMerger> {
   std::atomic_int lease_term_;
   bool is_merged_;
 
+  FML_FRIEND_REF_COUNTED_THREAD_SAFE(TaskRunnerMerger);
+  FML_FRIEND_MAKE_REF_COUNTED(TaskRunnerMerger);
   FML_DISALLOW_COPY_AND_ASSIGN(TaskRunnerMerger);
 };
 
