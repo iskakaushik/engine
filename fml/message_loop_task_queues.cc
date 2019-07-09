@@ -81,6 +81,7 @@ void MessageLoopTaskQueues::GetTasksToRunNow(
   }
 
   const auto now = fml::TimePoint::Now();
+  int ctr[30] = {0};
 
   while (HasPendingTasksUnlocked(queue_id)) {
     TaskQueueId top_queue;
@@ -90,10 +91,13 @@ void MessageLoopTaskQueues::GetTasksToRunNow(
     }
     invocations.emplace_back(std::move(top.GetTask()));
     delayed_tasks_[top_queue].pop();
+    ctr[top_queue]++;
     if (type == FlushType::kSingle) {
       break;
     }
   }
+
+  FML_LOG(ERROR) << "num_tasks [pl, gpu]: " << ctr[0] << ", " << ctr[2];
 
   if (!HasPendingTasksUnlocked(queue_id)) {
     WakeUp(queue_id, fml::TimePoint::Max());

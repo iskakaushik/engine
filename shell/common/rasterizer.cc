@@ -97,17 +97,18 @@ flutter::LayerTree* Rasterizer::GetLastLayerTree() {
 }
 
 void Rasterizer::DrawLastLayerTree() {
+  FML_LOG(ERROR) << "DrawLastLayerTree START";
   if (!last_layer_tree_ || !surface_) {
     return;
   }
   DrawToSurface(*last_layer_tree_);
+  FML_LOG(ERROR) << "DrawLastLayerTree END";
 }
 
 void Rasterizer::Draw(fml::RefPtr<Pipeline<flutter::LayerTree>> pipeline) {
+  std::scoped_lock<std::mutex> lock(draw_mutex_);
   TRACE_EVENT0("flutter", "GPURasterizer::Draw");
-  FML_DCHECK(task_runners_.GetGPUTaskRunner()->RunsTasksOnCurrentThread());
-
-  FML_LOG(ERROR) << "Drawing frame started ------------>";
+  // FML_DCHECK(task_runners_.GetGPUTaskRunner()->RunsTasksOnCurrentThread());
 
   RasterStatus raster_status = RasterStatus::kFailed;
   Pipeline<flutter::LayerTree>::Consumer consumer =
@@ -129,7 +130,7 @@ void Rasterizer::Draw(fml::RefPtr<Pipeline<flutter::LayerTree>> pipeline) {
   // between successive tries.
   switch (consume_result) {
     case PipelineConsumeResult::MoreAvailable: {
-      FML_LOG(ERROR) << "POSTING ==========================> ";
+      FML_LOG(ERROR) << "PipelineConsumeResult::MoreAvailable";
       task_runners_.GetGPUTaskRunner()->PostTask(
           [weak_this = weak_factory_.GetWeakPtr(), pipeline]() {
             if (weak_this) {
@@ -138,10 +139,15 @@ void Rasterizer::Draw(fml::RefPtr<Pipeline<flutter::LayerTree>> pipeline) {
           });
       break;
     }
+    case PipelineConsumeResult::NoneAvailable:
+      FML_LOG(ERROR) << "PipelineConsumeResult::NoneAvailable";
+      break;
+    case PipelineConsumeResult::Done:
+      FML_LOG(ERROR) << "PipelineConsumeResult::Done";
+      break;
     default:
       break;
   }
-  FML_LOG(ERROR) << "Drawing frame done!!!!!";
 }
 
 sk_sp<SkImage> Rasterizer::MakeRasterSnapshot(sk_sp<SkPicture> picture,
@@ -198,7 +204,7 @@ sk_sp<SkImage> Rasterizer::MakeRasterSnapshot(sk_sp<SkPicture> picture,
 
 RasterStatus Rasterizer::DoDraw(
     std::unique_ptr<flutter::LayerTree> layer_tree) {
-  FML_DCHECK(task_runners_.GetGPUTaskRunner()->RunsTasksOnCurrentThread());
+  // FML_DCHECK(task_runners_.GetGPUTaskRunner()->RunsTasksOnCurrentThread());
 
   if (!layer_tree || !surface_) {
     return RasterStatus::kFailed;
@@ -243,6 +249,9 @@ RasterStatus Rasterizer::DoDraw(
 RasterStatus Rasterizer::DrawToSurface(flutter::LayerTree& layer_tree) {
   FML_DCHECK(surface_);
 
+  FML_LOG(ERROR) << "Acquiring frame for size [h, w]: "
+                 << layer_tree.frame_size().height() << ", "
+                 << layer_tree.frame_size().width();
   auto frame = surface_->AcquireFrame(layer_tree.frame_size());
 
   if (frame == nullptr) {
@@ -268,7 +277,7 @@ RasterStatus Rasterizer::DrawToSurface(flutter::LayerTree& layer_tree) {
 
   if (compositor_frame) {
     RasterStatus raster_status = compositor_frame->Raster(layer_tree, false);
-    if (raster_status == RasterStatus::kFailed) {
+    if (raster_status != RasterStatus::kSuccess) {
       return raster_status;
     }
     frame->Submit();

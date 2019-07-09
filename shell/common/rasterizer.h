@@ -104,6 +104,7 @@ class Rasterizer final : public SnapshotDelegate {
  private:
   Delegate& delegate_;
   TaskRunners task_runners_;
+  std::mutex draw_mutex_;
   std::unique_ptr<Surface> surface_;
   std::unique_ptr<flutter::CompositorContext> compositor_context_;
   std::unique_ptr<flutter::LayerTree> last_layer_tree_;

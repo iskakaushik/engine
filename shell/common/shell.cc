@@ -799,6 +799,8 @@ void Shell::OnAnimatorNotifyIdle(int64_t deadline) {
 void Shell::OnAnimatorDraw(fml::RefPtr<Pipeline<flutter::LayerTree>> pipeline) {
   FML_DCHECK(is_setup_);
 
+  FML_LOG(ERROR) << "OnAnimatorDraw!!!";
+
   task_runners_.GetGPUTaskRunner()->PostTask(
       [rasterizer = rasterizer_->GetWeakPtr(),
        pipeline = std::move(pipeline)]() {
@@ -931,7 +933,7 @@ size_t Shell::UnreportedFramesCount() const {
 
 void Shell::OnFrameRasterized(const FrameTiming& timing) {
   FML_DCHECK(is_setup_);
-  FML_DCHECK(task_runners_.GetGPUTaskRunner()->RunsTasksOnCurrentThread());
+//  FML_DCHECK(task_runners_.GetGPUTaskRunner()->RunsTasksOnCurrentThread());
 
   // The C++ callback defined in settings.h and set by Flutter runner. This is
   // independent of the timings report to the Dart side.

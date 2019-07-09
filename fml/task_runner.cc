@@ -46,9 +46,6 @@ bool TaskRunner::RunsTasksOnCurrentThread() {
       MessageLoop::GetCurrent().GetLoopImpl()->GetTaskQueueId();
   const auto loop_queue_id = loop_->GetTaskQueueId();
 
-  FML_LOG(ERROR) << "RunsTasksOnCurrentThread loop_queue: "
-      << loop_queue_id << ", thread_queue: " << current_queue_id;
-
   if (current_queue_id == loop_queue_id) {
     return true;
   }
@@ -61,10 +58,7 @@ bool TaskRunner::RunsTasksOnCurrentThread() {
     return true;
   }
 
-  // todo fix
-  return true;
-
-  // return false;
+  return false;
 }
 
 void TaskRunner::RunNowOrPostTask(fml::RefPtr<fml::TaskRunner> runner,
