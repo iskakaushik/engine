@@ -49,6 +49,7 @@ Rasterizer::Rasterizer(
   const auto platform_id =
       task_runners.GetPlatformTaskRunner()->GetTaskQueueId();
   const auto gpu_id = task_runners.GetGPUTaskRunner()->GetTaskQueueId();
+  FML_LOG(ERROR) << "platform_id: " << platform_id << ", gpu_id: " << gpu_id;
   task_runner_merger_ =
       fml::MakeRefCounted<fml::TaskRunnerMerger>(platform_id, gpu_id);
 }
@@ -106,6 +107,8 @@ void Rasterizer::Draw(fml::RefPtr<Pipeline<flutter::LayerTree>> pipeline) {
   TRACE_EVENT0("flutter", "GPURasterizer::Draw");
   FML_DCHECK(task_runners_.GetGPUTaskRunner()->RunsTasksOnCurrentThread());
 
+  FML_LOG(ERROR) << "Drawing frame started ------------>";
+
   RasterStatus raster_status = RasterStatus::kFailed;
   Pipeline<flutter::LayerTree>::Consumer consumer =
       [&](std::unique_ptr<LayerTree> layer_tree) {
@@ -116,6 +119,7 @@ void Rasterizer::Draw(fml::RefPtr<Pipeline<flutter::LayerTree>> pipeline) {
   // if the raster status is to resubmit the frame, we push the frame to the
   // front of the queue and also change the consume status to more available.
   if (raster_status == RasterStatus::kResubmit) {
+    FML_LOG(ERROR) << "We are going to resubmit the frame!";
     auto front_continuation = pipeline->ProduceToFront();
     front_continuation.Complete(std::move(last_layer_tree_));
     consume_result = PipelineConsumeResult::MoreAvailable;
@@ -125,6 +129,7 @@ void Rasterizer::Draw(fml::RefPtr<Pipeline<flutter::LayerTree>> pipeline) {
   // between successive tries.
   switch (consume_result) {
     case PipelineConsumeResult::MoreAvailable: {
+      FML_LOG(ERROR) << "POSTING ==========================> ";
       task_runners_.GetGPUTaskRunner()->PostTask(
           [weak_this = weak_factory_.GetWeakPtr(), pipeline]() {
             if (weak_this) {
@@ -136,6 +141,7 @@ void Rasterizer::Draw(fml::RefPtr<Pipeline<flutter::LayerTree>> pipeline) {
     default:
       break;
   }
+  FML_LOG(ERROR) << "Drawing frame done!!!!!";
 }
 
 sk_sp<SkImage> Rasterizer::MakeRasterSnapshot(sk_sp<SkPicture> picture,
@@ -228,6 +234,8 @@ RasterStatus Rasterizer::DoDraw(
   // for Fuchsia to capture SceneUpdateContext::ExecutePaintTasks.
   timing.Set(FrameTiming::kRasterFinish, fml::TimePoint::Now());
   delegate_.OnFrameRasterized(timing);
+
+  task_runner_merger_->DecrementLease();
 
   return raster_status;
 }

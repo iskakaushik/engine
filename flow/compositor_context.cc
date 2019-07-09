@@ -69,18 +69,24 @@ RasterStatus CompositorContext::ScopedFrame::Raster(
   layer_tree.Preroll(*this, ignore_raster_cache);
   if (view_embedder_) {
     const bool uiviews_mutated = view_embedder_->HasPendingViewOperations();
+    FML_LOG(ERROR) << "here-0";
     if (uiviews_mutated) {
+      FML_LOG(ERROR) << "here-1";
       bool are_merged = task_runner_merger_->AreMerged();
+      FML_LOG(ERROR) << "here-2";
       // TODO(iskakaushik): make lease term a constant.
       if (are_merged) {
+        FML_LOG(ERROR) << "here-3";
         task_runner_merger_->ExtendLease(10);
+        FML_LOG(ERROR) << "here-4";
       } else {
+        FML_LOG(ERROR) << "here-5";
         view_embedder_->CancelFrame();
+        FML_LOG(ERROR) << "here-6";
         task_runner_merger_->MergeWithLease(10);
+        FML_LOG(ERROR) << "here-7";
         return RasterStatus::kResubmit;
       }
-    } else {
-      task_runner_merger_->DecrementLease();
     }
   }
   // Clearing canvas after preroll reduces one render target switch when preroll

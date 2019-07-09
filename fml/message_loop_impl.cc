@@ -105,6 +105,11 @@ void MessageLoopImpl::DoTerminate() {
   Terminate();
 }
 
+void MessageLoopImpl::Unmerge() {
+  std::scoped_lock task_flush_lock(tasks_flushing_mutex_);
+  task_queue_->Unmerge(queue_id_);
+}
+
 // Thread safety analysis disabled as it does not account for defered locks.
 void MessageLoopImpl::SwapTaskQueues(const fml::RefPtr<MessageLoopImpl>& other)
     FML_NO_THREAD_SAFETY_ANALYSIS {

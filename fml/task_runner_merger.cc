@@ -18,6 +18,7 @@ TaskRunnerMerger::TaskRunnerMerger(fml::TaskQueueId platform_queue_id,
 void TaskRunnerMerger::MergeWithLease(size_t lease_term) {
   FML_DCHECK(lease_term > 0) << "lease_term should be positive.";
   if (!is_merged_) {
+    FML_LOG(ERROR) << "Merging with lease term: " << lease_term;
     is_merged_ = task_queues_->Merge(platform_queue_id_, gpu_queue_id_);
     lease_term_ = lease_term;
   }
@@ -25,6 +26,7 @@ void TaskRunnerMerger::MergeWithLease(size_t lease_term) {
 
 void TaskRunnerMerger::ExtendLease(size_t lease_term) {
   FML_DCHECK(lease_term > 0) << "lease_term should be positive.";
+  FML_LOG(ERROR) << "Extending lease term: " << lease_term;
   if ((int)lease_term > lease_term_) {
     lease_term_ = lease_term;
   }
@@ -48,6 +50,7 @@ void TaskRunnerMerger::DecrementLease() {
       << "lease_term should always be positive when merged.";
   lease_term_--;
   if (lease_term_ == 0) {
+    FML_LOG(ERROR) << "Unmerging!";
     bool success = task_queues_->Unmerge(platform_queue_id_);
     is_merged_ = !success;
   }

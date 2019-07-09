@@ -58,7 +58,11 @@ void MessageLoopTaskQueues::RegisterTask(TaskQueueId queue_id,
   std::scoped_lock lock(GetMutex(queue_id, MutexType::kTasks));
   size_t order = order_++;
   delayed_tasks_[queue_id].push({order, std::move(task), target_time});
-  WakeUp(queue_id, delayed_tasks_[queue_id].top().GetTargetTime());
+  TaskQueueId loop_to_wake = queue_id;
+  if (subsumed_to_owner_[queue_id] != _kUnmerged) {
+    loop_to_wake = subsumed_to_owner_[queue_id];
+  }
+  WakeUp(loop_to_wake, delayed_tasks_[queue_id].top().GetTargetTime());
 }
 
 bool MessageLoopTaskQueues::HasPendingTasks(TaskQueueId queue_id) {
@@ -165,6 +169,7 @@ void MessageLoopTaskQueues::SetWakeable(TaskQueueId queue_id,
 }
 
 bool MessageLoopTaskQueues::Merge(TaskQueueId owner, TaskQueueId subsumed) {
+  FML_LOG(ERROR) << "Merging own: " << owner << ", sub: " << subsumed;
   // task_observers locks
   std::mutex& o1 = GetMutex(owner, MutexType::kObservers);
   std::mutex& o2 = GetMutex(subsumed, MutexType::kObservers);
@@ -199,6 +204,9 @@ bool MessageLoopTaskQueues::Merge(TaskQueueId owner, TaskQueueId subsumed) {
   if (HasPendingTasksUnlocked(owner)) {
     WakeUp(owner, GetNextWakeTimeUnlocked(owner));
   }
+
+  FML_LOG(ERROR) << "Merging own: " << owner << ", sub: " << subsumed
+                 << " DONE!!!";
 
   return true;
 }
