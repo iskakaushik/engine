@@ -29,8 +29,7 @@ void TaskRunnerMerger::MergeWithLease(size_t lease_term) {
 }
 
 bool TaskRunnerMerger::OnWrongThread() {
-  const auto current_queue_id =
-      MessageLoop::GetCurrent().GetLoopImpl()->GetTaskQueueId();
+  const auto current_queue_id = MessageLoop::GetCurrentTaskQueueId();
   if (is_merged_) {
     return current_queue_id != platform_queue_id_;
   } else {

@@ -212,6 +212,7 @@ executable("fml_unittests") {
     "synchronization/semaphore_unittest.cc",
     "synchronization/thread_annotations_unittest.cc",
     "synchronization/waitable_event_unittest.cc",
+    "task_runner_merger_unittests.cc",
     "thread_local_unittests.cc",
     "thread_unittests.cc",
     "time/time_delta_unittest.cc",

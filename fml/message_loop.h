@@ -42,9 +42,10 @@ class MessageLoop {
 
   ~MessageLoop();
 
+  static TaskQueueId GetCurrentTaskQueueId();
+
  private:
   friend class TaskRunner;
-  friend class TaskRunnerMerger;
   friend class MessageLoopImpl;
 
   fml::RefPtr<MessageLoopImpl> loop_;
