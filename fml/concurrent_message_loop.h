@@ -43,7 +43,7 @@ class ConcurrentMessageLoop
   bool shutdown_ = false;
 
   // |fml::MessageLoopImpl|
-  TaskQueueId GetTaskQueueId() const override;
+  TaskQueueId GetTaskQueueId() const;
 
   ConcurrentMessageLoop(size_t worker_count);
 
