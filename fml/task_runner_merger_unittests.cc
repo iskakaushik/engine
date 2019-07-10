@@ -145,3 +145,60 @@ TEST(TaskRunnerMerger, OnWrongThread) {
   thread1.join();
   thread2.join();
 }
+
+TEST(TaskRunnerMerger, LeaseExtension) {
+  fml::MessageLoop* loop1 = nullptr;
+  fml::AutoResetWaitableEvent latch1;
+  fml::AutoResetWaitableEvent term1;
+  std::thread thread1([&loop1, &latch1, &term1]() {
+    fml::MessageLoop::EnsureInitializedForCurrentThread();
+    loop1 = &fml::MessageLoop::GetCurrent();
+    latch1.Signal();
+    term1.Wait();
+  });
+
+  fml::MessageLoop* loop2 = nullptr;
+  fml::AutoResetWaitableEvent latch2;
+  fml::AutoResetWaitableEvent term2;
+  std::thread thread2([&loop2, &latch2, &term2]() {
+    fml::MessageLoop::EnsureInitializedForCurrentThread();
+    loop2 = &fml::MessageLoop::GetCurrent();
+    latch2.Signal();
+    term2.Wait();
+  });
+
+  latch1.Wait();
+  latch2.Wait();
+
+  fml::TaskQueueId qid1 = loop1->GetTaskRunner()->GetTaskQueueId();
+  fml::TaskQueueId qid2 = loop2->GetTaskRunner()->GetTaskQueueId();
+  const auto task_runner_merger_ =
+      fml::MakeRefCounted<fml::TaskRunnerMerger>(qid1, qid2);
+  const int kNumFramesMerged = 5;
+
+  ASSERT_FALSE(task_runner_merger_->AreMerged());
+
+  task_runner_merger_->MergeWithLease(kNumFramesMerged);
+
+  // let there be one more turn till the leases expire.
+  for (int i = 0; i < kNumFramesMerged - 1; i++) {
+    ASSERT_TRUE(task_runner_merger_->AreMerged());
+    task_runner_merger_->DecrementLease();
+  }
+
+  // extend the lease once.
+  task_runner_merger_->ExtendLease(kNumFramesMerged);
+
+  // we will NOT last for 1 extra turn, we just set it.
+  for (int i = 0; i < kNumFramesMerged; i++) {
+    ASSERT_TRUE(task_runner_merger_->AreMerged());
+    task_runner_merger_->DecrementLease();
+  }
+
+  ASSERT_FALSE(task_runner_merger_->AreMerged());
+
+  term1.Signal();
+  term2.Signal();
+  thread1.join();
+  thread2.join();
+}
