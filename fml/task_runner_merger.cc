@@ -48,14 +48,14 @@ bool TaskRunnerMerger::AreMerged() const {
   return is_merged_;
 }
 
-void TaskRunnerMerger::DecrementLease() {
+bool TaskRunnerMerger::DecrementLease() {
   if (!is_merged_) {
-    return;
+    return false;
   }
 
   // we haven't been set to merge.
   if (lease_term_ == kLeaseNotSet) {
-    return;
+    return false;
   }
 
   FML_DCHECK(lease_term_ > 0)
@@ -64,7 +64,10 @@ void TaskRunnerMerger::DecrementLease() {
   if (lease_term_ == 0) {
     bool success = task_queues_->Unmerge(platform_queue_id_);
     is_merged_ = !success;
+    return true;
   }
+
+  return false;
 }
 
 }  // namespace fml

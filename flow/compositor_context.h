@@ -21,7 +21,7 @@ namespace flutter {
 
 class LayerTree;
 
-enum class RasterStatus { kSuccess, kResubmit, kFailed };
+enum class RasterStatus { kSuccess, kResubmit, kEnqueuePipeline, kFailed };
 
 class CompositorContext {
  public:

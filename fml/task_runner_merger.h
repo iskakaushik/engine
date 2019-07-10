@@ -19,7 +19,8 @@ class TaskRunnerMerger : public fml::RefCountedThreadSafe<TaskRunnerMerger> {
 
   void ExtendLease(size_t lease_term);
 
-  void DecrementLease();
+  // Returns true if we unmerged this turn.
+  bool DecrementLease();
 
   bool AreMerged() const;
 

@@ -122,6 +122,8 @@ void Rasterizer::Draw(fml::RefPtr<Pipeline<flutter::LayerTree>> pipeline) {
     auto front_continuation = pipeline->ProduceToFront();
     front_continuation.Complete(std::move(last_layer_tree_));
     consume_result = PipelineConsumeResult::MoreAvailable;
+  } else if (raster_status == RasterStatus::kEnqueuePipeline) {
+    consume_result = PipelineConsumeResult::MoreAvailable;
   }
 
   // Consume as many pipeline items as possible. But yield the event loop
@@ -232,7 +234,9 @@ RasterStatus Rasterizer::DoDraw(
   timing.Set(FrameTiming::kRasterFinish, fml::TimePoint::Now());
   delegate_.OnFrameRasterized(timing);
 
-  task_runner_merger_->DecrementLease();
+  if (task_runner_merger_->DecrementLease()) {
+    return RasterStatus::kEnqueuePipeline;
+  }
 
   return raster_status;
 }
