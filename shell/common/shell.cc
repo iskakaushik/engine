@@ -799,8 +799,6 @@ void Shell::OnAnimatorNotifyIdle(int64_t deadline) {
 void Shell::OnAnimatorDraw(fml::RefPtr<Pipeline<flutter::LayerTree>> pipeline) {
   FML_DCHECK(is_setup_);
 
-  FML_LOG(ERROR) << "OnAnimatorDraw!!!";
-
   task_runners_.GetGPUTaskRunner()->PostTask(
       [rasterizer = rasterizer_->GetWeakPtr(),
        pipeline = std::move(pipeline)]() {

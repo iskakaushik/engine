@@ -89,7 +89,9 @@ class Pipeline : public fml::RefCountedThreadSafe<Pipeline<R>> {
   };
 
   explicit Pipeline(uint32_t depth)
-      : depth_(depth), empty_(depth), available_(0) {}
+      : depth_(depth), empty_(depth), available_(0) {
+        FML_LOG(ERROR) << "PIPELINE depth = " << depth_;
+      }
 
   ~Pipeline() = default;
 

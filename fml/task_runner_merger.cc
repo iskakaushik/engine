@@ -2,7 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#define FML_USED_ON_EMBEDDER
+
 #include "flutter/fml/task_runner_merger.h"
+#include "flutter/fml/message_loop_impl.h"
 
 namespace fml {
 
@@ -24,9 +27,19 @@ void TaskRunnerMerger::MergeWithLease(size_t lease_term) {
   }
 }
 
+bool TaskRunnerMerger::OnWrongThread() {
+  const auto current_queue_id =
+      MessageLoop::GetCurrent().GetLoopImpl()->GetTaskQueueId();
+  if (is_merged_) {
+    return current_queue_id != platform_queue_id_;
+  } else {
+    return current_queue_id != gpu_queue_id_;
+  }
+}
+
 void TaskRunnerMerger::ExtendLease(size_t lease_term) {
   FML_DCHECK(lease_term > 0) << "lease_term should be positive.";
-  FML_LOG(ERROR) << "Extending lease term: " << lease_term;
+  // FML_LOG(ERROR) << "Extending lease term: " << lease_term;
   if ((int)lease_term > lease_term_) {
     lease_term_ = lease_term;
   }

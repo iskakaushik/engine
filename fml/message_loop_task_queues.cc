@@ -97,7 +97,7 @@ void MessageLoopTaskQueues::GetTasksToRunNow(
     }
   }
 
-  FML_LOG(ERROR) << "num_tasks [pl, gpu]: " << ctr[0] << ", " << ctr[2];
+  // FML_LOG(ERROR) << "num_tasks [pl, gpu]: " << ctr[0] << ", " << ctr[2];
 
   if (!HasPendingTasksUnlocked(queue_id)) {
     WakeUp(queue_id, fml::TimePoint::Max());

@@ -11,6 +11,8 @@
 
 namespace fml {
 
+class MessageLoopImpl;
+
 class TaskRunnerMerger : public fml::RefCountedThreadSafe<TaskRunnerMerger> {
  public:
   void MergeWithLease(size_t lease_term);
@@ -23,6 +25,8 @@ class TaskRunnerMerger : public fml::RefCountedThreadSafe<TaskRunnerMerger> {
 
   TaskRunnerMerger(fml::TaskQueueId platform_queue_id,
                    fml::TaskQueueId gpu_queue_id);
+
+  bool OnWrongThread();
 
  private:
   fml::TaskQueueId platform_queue_id_;
