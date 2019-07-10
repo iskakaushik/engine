@@ -43,8 +43,7 @@ bool TaskRunner::RunsTasksOnCurrentThread() {
     return false;
   }
 
-  const auto current_queue_id =
-      MessageLoop::GetCurrent().GetLoopImpl()->GetTaskQueueId();
+  const auto current_queue_id = MessageLoop::GetCurrentTaskQueueId();
   const auto loop_queue_id = loop_->GetTaskQueueId();
 
   if (current_queue_id == loop_queue_id) {
