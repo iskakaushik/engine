@@ -22,8 +22,8 @@
 #include "third_party/tonic/dart_class_library.h"
 
 // #if !defined(FUCHSIA_SDK)
-#include <fuchsia/device/manager/cpp/fidl.h>
-#include "lib/fsl/io/fd.h"
+// #include <fuchsia/device/manager/cpp/fidl.h>
+#include <lib/fdio/fd.h>
 // #endif  // !defined(FUCHSIA_SDK)
 
 using tonic::ToDart;
@@ -177,55 +177,58 @@ Dart_Handle System::ChannelCreate(uint32_t options) {
 }
 
 zx_status_t System::Reboot() {
-// #if defined(FUCHSIA_SDK)
-//   FML_CHECK(false);
-//   return ZX_ERR_NOT_SUPPORTED;
-// #else   // !defined(FUCHSIA_SDK)
-  zx::channel local, remote;
-  auto status = zx::channel::create(0, &local, &remote);
-  if (status != ZX_OK) {
-    return status;
-  }
+  // #if defined(FUCHSIA_SDK)
+  //   FML_CHECK(false);
+  //   return ZX_ERR_NOT_SUPPORTED;
+  // #else   // !defined(FUCHSIA_SDK)
+  // zx::channel local, remote;
+  // auto status = zx::channel::create(0, &local, &remote);
+  // if (status != ZX_OK) {
+  //   return status;
+  // }
 
-  const std::string service =
-      std::string{"/svc/"} + fuchsia::device::manager::Administrator::Name_;
-  status = fdio_service_connect(service.c_str(), remote.get());
-  if (status != ZX_OK) {
-    printf("failed to connect to service %s: %d\n", service.c_str(), status);
-    return status;
-  }
+  // const std::string service =
+  //     std::string{"/svc/"} + fuchsia::device::manager::Administrator::Name_;
+  // status = fdio_service_connect(service.c_str(), remote.get());
+  // if (status != ZX_OK) {
+  //   printf("failed to connect to service %s: %d\n", service.c_str(), status);
+  //   return status;
+  // }
 
-  zx_status_t call_status;
-  fuchsia::device::manager::Administrator_SyncProxy administrator(
-      std::move(local));
-  status = administrator.Suspend(DEVICE_SUSPEND_FLAG_REBOOT, &call_status);
-  if (status != ZX_OK || call_status != ZX_OK) {
-    printf("Call to %s failed: ret: %d  remote: %d\n", service.c_str(), status,
-           call_status);
-  }
+  // zx_status_t call_status;
+  // fuchsia::device::manager::Administrator_SyncProxy administrator(
+  //     std::move(local));
+  // status = administrator.Suspend(DEVICE_SUSPEND_FLAG_REBOOT, &call_status);
+  // if (status != ZX_OK || call_status != ZX_OK) {
+  //   printf("Call to %s failed: ret: %d  remote: %d\n", service.c_str(),
+  //   status,
+  //          call_status);
+  // }
 
-  return status != ZX_OK ? status : call_status;
-// #endif  // !defined(FUCHSIA_SDK)
+  // return status != ZX_OK ? status : call_status;
+  // #endif  // !defined(FUCHSIA_SDK)
+  return ZX_OK;
 }
 
 Dart_Handle System::ChannelFromFile(std::string path) {
+  return ConstructDartObject(kHandleResult, ToDart(ZX_ERR_IO));
   // #if defined(FUCHSIA_SDK)
   //   FML_CHECK(false);
   //   return Dart_Null();
   // #else   // !defined(FUCHSIA_SDK)
-  fml::UniqueFD fd = FdFromPath(path);
-  if (!fd.is_valid()) {
-    return ConstructDartObject(kHandleResult, ToDart(ZX_ERR_IO));
-  }
+  // fml::UniqueFD fd = FdFromPath(path);
+  // if (!fd.is_valid()) {
+  //   return ConstructDartObject(kHandleResult, ToDart(ZX_ERR_IO));
+  // }
 
   // Get channel from fd.
-  zx::channel channel = fsl::CloneChannelFromFileDescriptor(fd.get());
-  if (!channel) {
-    return ConstructDartObject(kHandleResult, ToDart(ZX_ERR_IO));
-  }
+  // zx::channel channel = fsl::CloneChannelFromFileDescriptor(fd.get());
+  // if (true) {
+  //   return ConstructDartObject(kHandleResult, ToDart(ZX_ERR_IO));
+  // }
 
-  return ConstructDartObject(kHandleResult, ToDart(ZX_OK),
-                             ToDart(Handle::Create(channel.release())));
+  // return ConstructDartObject(kHandleResult, ToDart(ZX_OK),
+  //                            ToDart(Handle::Create(channel.release())));
   // #endif  // !defined(FUCHSIA_SDK)
 }
 
