@@ -117,7 +117,7 @@ def CopyToBucketWithMode(source, destination, aot, product, runner_type):
   far_dir_name = '%s_far' % runner_name
   source_root = os.path.join(_out_dir, source)
   far_base = os.path.join(source_root, far_dir_name)
-  CreateMetaPackage(far_base, runner_name)
+  CreateMetaPackage(far_base, 'g3_' + runner_name)
   pm_bin = GetPMBinPath()
   key_path = os.path.join(_script_dir, 'development.key')
 
@@ -234,13 +234,15 @@ def main():
   RemoveDirectoryIfExists(_bucket_directory)
   build_mode = args.runtime_mode
 
-  archs = ['x64', 'arm64']
+  archs = ['arm64']
   runtime_modes = ['debug', 'profile', 'release']
   product_modes = [False, False, True]
 
   for arch in archs:
     for i in range(3):
       runtime_mode = runtime_modes[i]
+      if runtime_mode != 'release':
+        continue
       product = product_modes[i]
       if build_mode == 'all' or runtime_mode == build_mode:
         BuildTarget(runtime_mode, arch, product)
