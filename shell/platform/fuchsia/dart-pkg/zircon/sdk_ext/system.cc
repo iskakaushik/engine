@@ -50,15 +50,6 @@ zx::channel CloneChannelFromFileDescriptor(int fd) {
   return zx::channel(handle.release());
 }
 
-fxl::UniqueFD OpenChannelAsFileDescriptor(zx::channel channel) {
-  int fd = -1;
-  zx_status_t status = fdio_fd_create(channel.release(), &fd);
-  if (status != ZX_OK) {
-    return fxl::UniqueFD();
-  }
-  return fxl::UniqueFD(fd);
-}
-
 }
 
 using tonic::ToDart;
