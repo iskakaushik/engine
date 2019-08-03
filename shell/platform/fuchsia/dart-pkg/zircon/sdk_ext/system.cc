@@ -26,6 +26,41 @@
 #include <lib/fdio/fd.h>
 // #endif  // !defined(FUCHSIA_SDK)
 
+#include <lib/fdio/limits.h>
+#include <lib/fdio/fd.h>
+#include <lib/fdio/fdio.h>
+#include <lib/fdio/directory.h>
+#include <zircon/processargs.h>
+#include <zircon/syscalls.h>
+
+namespace fsl {
+
+zx::channel CloneChannelFromFileDescriptor(int fd) {
+  zx::handle handle;
+  zx_status_t status = fdio_fd_clone(fd, handle.reset_and_get_address());
+  if (status != ZX_OK)
+    return zx::channel();
+
+  zx_info_handle_basic_t info = {};
+  status = handle.get_info(ZX_INFO_HANDLE_BASIC, &info, sizeof(info), NULL, NULL);
+
+  if (status != ZX_OK || info.type != ZX_OBJ_TYPE_CHANNEL)
+    return zx::channel();
+
+  return zx::channel(handle.release());
+}
+
+fxl::UniqueFD OpenChannelAsFileDescriptor(zx::channel channel) {
+  int fd = -1;
+  zx_status_t status = fdio_fd_create(channel.release(), &fd);
+  if (status != ZX_OK) {
+    return fxl::UniqueFD();
+  }
+  return fxl::UniqueFD(fd);
+}
+
+}
+
 using tonic::ToDart;
 
 namespace zircon {
@@ -211,24 +246,24 @@ zx_status_t System::Reboot() {
 }
 
 Dart_Handle System::ChannelFromFile(std::string path) {
-  return ConstructDartObject(kHandleResult, ToDart(ZX_ERR_IO));
+  // return ConstructDartObject(kHandleResult, ToDart(ZX_ERR_IO));
   // #if defined(FUCHSIA_SDK)
   //   FML_CHECK(false);
   //   return Dart_Null();
   // #else   // !defined(FUCHSIA_SDK)
-  // fml::UniqueFD fd = FdFromPath(path);
-  // if (!fd.is_valid()) {
-  //   return ConstructDartObject(kHandleResult, ToDart(ZX_ERR_IO));
-  // }
+  fml::UniqueFD fd = FdFromPath(path);
+  if (!fd.is_valid()) {
+    return ConstructDartObject(kHandleResult, ToDart(ZX_ERR_IO));
+  }
 
   // Get channel from fd.
-  // zx::channel channel = fsl::CloneChannelFromFileDescriptor(fd.get());
-  // if (true) {
-  //   return ConstructDartObject(kHandleResult, ToDart(ZX_ERR_IO));
-  // }
+  zx::channel channel = fsl::CloneChannelFromFileDescriptor(fd.get());
+  if (true) {
+    return ConstructDartObject(kHandleResult, ToDart(ZX_ERR_IO));
+  }
 
-  // return ConstructDartObject(kHandleResult, ToDart(ZX_OK),
-  //                            ToDart(Handle::Create(channel.release())));
+  return ConstructDartObject(kHandleResult, ToDart(ZX_OK),
+                             ToDart(Handle::Create(channel.release())));
   // #endif  // !defined(FUCHSIA_SDK)
 }
 
