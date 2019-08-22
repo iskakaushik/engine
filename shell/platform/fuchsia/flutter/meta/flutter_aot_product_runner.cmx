@@ -10,9 +10,10 @@
         ],
         "services": [
             "fuchsia.crash.Analyzer",
+            "fuchsia.device.NameProvider",
             "fuchsia.fonts.Provider",
-            "fuchsia.net.NameLookup",
             "fuchsia.posix.socket.Provider",
+            "fuchsia.net.NameLookup",
             "fuchsia.sysmem.Allocator",
             "fuchsia.timezone.Timezone",
             "fuchsia.tracing.provider.Registry",
