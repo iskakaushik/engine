@@ -348,6 +348,5 @@ executable("flutter_runner_unittests") {
 
   deps = [
     "$flutter_root/shell/testing",
-    "$flutter_root/testing:testing_lib",
   ]
 }
