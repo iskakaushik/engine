@@ -30,7 +30,8 @@ executable("testing") {
     "//third_party/tonic",
   ]
 
-  if (is_fuchsia && !is_fuchsia_sdk) {
-    deps += [ "//garnet/public/lib/ui/scenic:client" ]
+  if (is_fuchsia && (!defined(is_fuchsia_sdk) || !is_fuchsia_sdk)) {
+    # TODO(iskakaushik): enable this once we need it for testing.
+    # deps += [ "//garnet/public/lib/ui/scenic:client" ]
   }
 }

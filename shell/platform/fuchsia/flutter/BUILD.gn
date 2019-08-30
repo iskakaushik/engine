@@ -336,3 +336,17 @@ jit_runner("flutter_jit_runner") {
 jit_runner("flutter_jit_product_runner") {
   product = true
 }
+
+executable("flutter_runner_unittests") {
+  testonly = true
+
+  output_name = "flutter_runner_tests"
+
+  sources = [
+    "noop_unittest.cc",
+  ]
+
+  deps = [
+    "$flutter_root/shell/testing",
+  ]
+}
