@@ -20,6 +20,13 @@ if (using_fuchsia_sdk) {
       "dart:kernel_compiler",
       "dart_runner:$dart_runner_target",
       "flutter:$flutter_runner_target",
+      "flutter:flutter_runner_unittests",
     ]
   }
+}
+
+group("host") {
+  deps = [
+    "flutter:flutter_runner_unittests",
+  ]
 }
