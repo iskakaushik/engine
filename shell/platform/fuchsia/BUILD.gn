@@ -24,9 +24,3 @@ if (using_fuchsia_sdk) {
     ]
   }
 }
-
-group("host") {
-  deps = [
-    "flutter:flutter_runner_unittests",
-  ]
-}
