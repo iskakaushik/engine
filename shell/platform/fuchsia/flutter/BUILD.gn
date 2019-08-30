@@ -346,7 +346,7 @@ executable("flutter_runner_unittests") {
     "noop_unittest.cc",
   ]
 
-  deps = [
-    "$flutter_root/shell/testing",
-  ]
+  # deps = [
+  #   "$flutter_root/shell/testing",
+  # ]
 }
