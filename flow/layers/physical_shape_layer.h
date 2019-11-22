@@ -44,7 +44,7 @@ class PhysicalShapeLayer : public ContainerLayer {
   float total_elevation_ = 0.0f;
   SkPath path_;
   bool isRect_;
-  SkRRect frameRRect_;
+  SkRRect frameRRect_ = SkRRect::MakeEmpty();
   Clip clip_behavior_;
 
   friend class PhysicalShapeLayer_TotalElevation_Test;
