@@ -281,22 +281,27 @@ bool DartIsolate::LoadLibraries() {
 
 bool DartIsolate::PrepareForRunningFromPrecompiledCode() {
   TRACE_EVENT0("flutter", "DartIsolate::PrepareForRunningFromPrecompiledCode");
+  FML_LOG(ERROR) << "ISOLATE PrepareForRunningFromPrecompiledCode";
   if (phase_ != Phase::LibrariesSetup) {
+    FML_LOG(ERROR) << "ISOLATE LIBS NOT SET UP";
     return false;
   }
 
   tonic::DartState::Scope scope(this);
 
   if (Dart_IsNull(Dart_RootLibrary())) {
+    FML_LOG(ERROR) << "ISOLATE ROOT LIB IS NULL";
     return false;
   }
 
   if (!MarkIsolateRunnable()) {
+    FML_LOG(ERROR) << "ISOLATE FAILED TO MARK RUNNABLE";
     return false;
   }
 
   if (GetIsolateGroupData().GetChildIsolatePreparer() == nullptr) {
     GetIsolateGroupData().SetChildIsolatePreparer([](DartIsolate* isolate) {
+      FML_LOG(ERROR) << "ISOLATE PREPARE CHILD";
       return isolate->PrepareForRunningFromPrecompiledCode();
     });
   }
@@ -343,15 +348,19 @@ bool DartIsolate::PrepareForRunningFromKernel(
     std::shared_ptr<const fml::Mapping> mapping,
     bool last_piece) {
   TRACE_EVENT0("flutter", "DartIsolate::PrepareForRunningFromKernel");
+  FML_LOG(ERROR) << "ISOLATE PrepareForRunningFromPrecompiledCode";
   if (phase_ != Phase::LibrariesSetup) {
+    FML_LOG(ERROR) << "ISOLATE LIBS NOT SET UP";
     return false;
   }
 
   if (DartVM::IsRunningPrecompiledCode()) {
+    FML_LOG(ERROR) << "ISOLATE IS RUNNING PRECOMPILED CODE";
     return false;
   }
 
   if (!mapping || mapping->GetSize() == 0) {
+    FML_LOG(ERROR) << "KERNEL HAS EMPRTY MAPPING";
     return false;
   }
 
@@ -361,6 +370,7 @@ bool DartIsolate::PrepareForRunningFromKernel(
   Dart_SetRootLibrary(Dart_Null());
 
   if (!LoadKernel(mapping, last_piece)) {
+    FML_LOG(ERROR) << "FAILED TO LOAD KERNEL";
     return false;
   }
 
@@ -370,10 +380,12 @@ bool DartIsolate::PrepareForRunningFromKernel(
   }
 
   if (Dart_IsNull(Dart_RootLibrary())) {
+    FML_LOG(ERROR) << "ISOLATE ROOT LIB IS NULL";
     return false;
   }
 
   if (!MarkIsolateRunnable()) {
+    FML_LOG(ERROR) << "ISOLATE FAILED TO MARK RUNNABLE";
     return false;
   }
 
@@ -386,7 +398,9 @@ bool DartIsolate::PrepareForRunningFromKernel(
           for (unsigned long i = 0; i < buffers.size(); i++) {
             bool last_piece = i + 1 == buffers.size();
             const std::shared_ptr<const fml::Mapping>& buffer = buffers.at(i);
+            FML_LOG(ERROR) << "ISOLATE PREPARE CHILD";
             if (!isolate->PrepareForRunningFromKernel(buffer, last_piece)) {
+              FML_LOG(ERROR) << "ISOLATE PREPARE CHILD FAILED";
               return false;
             }
           }

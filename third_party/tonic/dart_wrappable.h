@@ -139,13 +139,16 @@ struct DartConverter<
 // adopts a raw pointer to that type.
 
 template <template <typename T> class PTR, typename T>
-struct DartConverter<PTR<T>> {
+struct DartConverter<
+    PTR<T>,
+    typename std::enable_if<
+        std::is_convertible<T*, const DartWrappable*>::value>::type> {
   static Dart_Handle ToDart(const PTR<T>& val) {
     return DartConverter<T*>::ToDart(val.get());
   }
 
   static PTR<T> FromDart(Dart_Handle handle) {
-    return DartConverter<T*>::FromDart(handle);
+    return PTR<T>(DartConverter<T*>::FromDart(handle));
   }
 
   static PTR<T> FromArguments(Dart_NativeArguments args,

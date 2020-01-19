@@ -4,29 +4,23 @@
 
 import("//build/fuchsia/sdk.gni")
 
-config("sdk_ext_config") {
-  include_dirs = [ "../.." ]
-}
-
-group("fuchsia") {
-  public_deps = [
-    ":sdk_ext",
-  ]
-}
-
-source_set("sdk_ext") {
+source_set("fuchsia") {
   sources = [
     "sdk_ext/fuchsia.cc",
     "sdk_ext/fuchsia.h",
   ]
 
-  deps = [
+  public_deps = [
     "$fuchsia_sdk_root/fidl:fuchsia.sys",
     "$fuchsia_sdk_root/pkg:async-cpp",
-    "../zircon",
-    "//flutter/fml",
-    "//flutter/third_party/tonic",
+    "$fuchsia_sdk_root/pkg:fidl_cpp",
+    "$fuchsia_sdk_root/pkg:zx",
+    "//flutter/third_party/tonic",  # TODO(dworsham): Figure out ownership
+    "//third_party/dart/runtime:dart_api",
   ]
 
-  public_configs = [ ":sdk_ext_config" ]
+  deps = [
+    "//flutter/shell/platform/fuchsia/dart-pkg/zircon",
+    "//flutter/shell/platform/fuchsia/utils",
+  ]
 }

@@ -29,6 +29,7 @@ source_set("test_font") {
 }
 
 # Picks the libdart implementation based on the Flutter runtime mode.
+# TODO(dworsham): Needs to handle "product"
 group("libdart") {
   public_deps = []
 

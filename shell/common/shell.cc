@@ -645,6 +645,7 @@ void Shell::OnPlatformViewCreated(std::unique_ptr<Surface> surface) {
       io_manager->NotifyResourceContextAvailable(
           platform_view->CreateResourceContext());
     }
+
     // Step 1: Next, post a task on the UI thread to tell the engine that it has
     // an output surface.
     fml::TaskRunner::RunNowOrPostTask(ui_task_runner, ui_task);
@@ -781,6 +782,7 @@ void Shell::OnPlatformViewDispatchPointerDataPacket(
   TRACE_FLOW_BEGIN("flutter", "PointerEvent", next_pointer_flow_id_);
   FML_DCHECK(is_setup_);
   FML_DCHECK(task_runners_.GetPlatformTaskRunner()->RunsTasksOnCurrentThread());
+
   task_runners_.GetUITaskRunner()->PostTask(
       fml::MakeCopyable([engine = weak_engine_, packet = std::move(packet),
                          flow_id = next_pointer_flow_id_]() mutable {
