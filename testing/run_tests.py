@@ -23,7 +23,7 @@ roboto_font_path = os.path.join(fonts_dir, 'Roboto-Regular.ttf')
 dart_tests_dir = os.path.join(buildroot_dir, 'flutter', 'testing', 'dart',)
 font_subset_dir = os.path.join(buildroot_dir, 'flutter', 'tools', 'font-subset')
 
-fml_unittests_filter = '--gtest_filter=-*TimeSensitiveTest*'
+fml_unittests_filter = '--gtest_filter=-*TimeSensitiveTest*:*GpuThreadMerger*'
 
 def PrintDivider(char='='):
   print '\n'
