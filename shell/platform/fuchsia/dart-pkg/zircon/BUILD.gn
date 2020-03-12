@@ -4,28 +4,43 @@
 
 import("//build/fuchsia/sdk.gni")
 
-source_set("zircon") {
-  sources = [
-    "sdk_ext/handle.cc",
-    "sdk_ext/handle.h",
-    "sdk_ext/handle_waiter.cc",
-    "sdk_ext/handle_waiter.h",
-    "sdk_ext/natives.cc",
-    "sdk_ext/natives.h",
-    "sdk_ext/system.cc",
-    "sdk_ext/system.h",
-  ]
+template("zircon_sources") {
+  product = defined(invoker.product) && invoker.product
+  product_suffix = ""
+  if (product) {
+    product_suffix = "_product"
+  }
+  source_set(target_name) {
+    sources = [
+      "sdk_ext/handle.cc",
+      "sdk_ext/handle.h",
+      "sdk_ext/handle_waiter.cc",
+      "sdk_ext/handle_waiter.h",
+      "sdk_ext/natives.cc",
+      "sdk_ext/natives.h",
+      "sdk_ext/system.cc",
+      "sdk_ext/system.h",
+    ]
 
-  public_deps = [
-    "$fuchsia_sdk_root/pkg:async-cpp",
-    "$fuchsia_sdk_root/pkg:zx",
-    "//flutter/third_party/tonic",  # TODO(dworsham): Figure out ownership
-    "//third_party/dart/runtime:dart_api",
-  ]
+    public_deps = [
+      "$fuchsia_sdk_root/pkg:async-cpp",
+      "$fuchsia_sdk_root/pkg:zx",
+      "//flutter/third_party/tonic",  # TODO(dworsham): Figure out ownership
+      "//third_party/dart/runtime:dart_api",
+    ]
 
-  deps = [
-    "$fuchsia_sdk_root/pkg:async-default",
-    "$fuchsia_sdk_root/pkg:fdio",
-    "//flutter/shell/platform/fuchsia/utils",  # TODO(dworsham): Handle product
-  ]
+    deps = [
+      "$fuchsia_sdk_root/pkg:async-default",
+      "$fuchsia_sdk_root/pkg:fdio",
+      "//flutter/shell/platform/fuchsia/utils:utils$product_suffix",  # TODO(dworsham): Handle product
+    ]
+  }
+}
+
+zircon_sources("zircon_product") {
+  product = true
+}
+
+zircon_sources("zircon") {
+  product = false
 }

@@ -46,19 +46,21 @@ template("runner") {
     dart_deps = []
     if (!invoker.product) {
       dart_deps += [
+        "//flutter/shell/platform/fuchsia/dart-pkg/zircon:zircon",
         "//third_party/dart/runtime/bin:dart_io_api",
         "//flutter/shell/platform/fuchsia/utils",
+        "//flutter/shell/platform/fuchsia/dart-pkg/fuchsia:fuchsia",
       ]
     } else {
       dart_deps += [
+        "//flutter/shell/platform/fuchsia/dart-pkg/zircon:zircon_product",
         "//third_party/dart/runtime/bin:dart_io_api_product",
         "//flutter/shell/platform/fuchsia/utils:utils_product",
+        "//flutter/shell/platform/fuchsia/dart-pkg/fuchsia:fuchsia_product",
       ]
     }
 
     deps = [
-             "//flutter/shell/platform/fuchsia/dart-pkg/fuchsia",
-             "//flutter/shell/platform/fuchsia/dart-pkg/zircon",
              "$fuchsia_sdk_root/fidl:fuchsia.io",
              "$fuchsia_sdk_root/fidl:fuchsia.sys",
              "$fuchsia_sdk_root/pkg:async-cpp",

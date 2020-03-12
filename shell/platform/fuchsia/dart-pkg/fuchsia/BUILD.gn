@@ -4,23 +4,39 @@
 
 import("//build/fuchsia/sdk.gni")
 
-source_set("fuchsia") {
-  sources = [
-    "sdk_ext/fuchsia.cc",
-    "sdk_ext/fuchsia.h",
-  ]
+template("fuchsia_sources") {
+  product = defined(invoker.product) && invoker.product
+  product_suffix = ""
+  if (product) {
+    product_suffix = "_product"
+  }
 
-  public_deps = [
-    "$fuchsia_sdk_root/fidl:fuchsia.sys",
-    "$fuchsia_sdk_root/pkg:async-cpp",
-    "$fuchsia_sdk_root/pkg:fidl_cpp",
-    "$fuchsia_sdk_root/pkg:zx",
-    "//flutter/third_party/tonic",  # TODO(dworsham): Figure out ownership
-    "//third_party/dart/runtime:dart_api",
-  ]
+  source_set(target_name) {
+    sources = [
+      "sdk_ext/fuchsia.cc",
+      "sdk_ext/fuchsia.h",
+    ]
 
-  deps = [
-    "//flutter/shell/platform/fuchsia/dart-pkg/zircon",
-    "//flutter/shell/platform/fuchsia/utils",
-  ]
+    public_deps = [
+      "$fuchsia_sdk_root/fidl:fuchsia.sys",
+      "$fuchsia_sdk_root/pkg:async-cpp",
+      "$fuchsia_sdk_root/pkg:fidl_cpp",
+      "$fuchsia_sdk_root/pkg:zx",
+      "//flutter/third_party/tonic",  # TODO(dworsham): Figure out ownership
+      "//third_party/dart/runtime:dart_api",
+    ]
+
+    deps = [
+      "//flutter/shell/platform/fuchsia/dart-pkg/zircon:zircon$product_suffix",
+      "//flutter/shell/platform/fuchsia/utils:utils$product_suffix",
+    ]
+  }
+}
+
+fuchsia_sources("fuchsia_product") {
+  product = true
+}
+
+fuchsia_sources("fuchsia") {
+  product = false
 }
