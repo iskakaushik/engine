@@ -1225,6 +1225,7 @@ FlutterEngineResult FlutterEngineSendPointerEvent(
   for (size_t i = 0; i < events_count; ++i) {
     flutter::PointerData pointer_data;
     pointer_data.Clear();
+    pointer_data.motion_event_id = SAFE_ACCESS(current, motion_event_id, 0);
     pointer_data.time_stamp = SAFE_ACCESS(current, timestamp, 0);
     pointer_data.change = ToPointerDataChange(
         SAFE_ACCESS(current, phase, FlutterPointerPhase::kCancel));
