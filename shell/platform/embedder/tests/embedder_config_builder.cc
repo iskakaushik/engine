@@ -232,6 +232,10 @@ void EmbedderConfigBuilder::SetPlatformMessageCallback(
   context_.SetPlatformMessageCallback(callback);
 }
 
+void EmbedderConfigBuilder::SetDisplayRefreshRate(float display_refresh_rate) {
+  project_args_.display_refresh_rate = display_refresh_rate;
+}
+
 void EmbedderConfigBuilder::SetCompositor() {
   context_.SetupCompositor();
   auto& compositor = context_.GetCompositor();

@@ -4459,5 +4459,48 @@ TEST_F(EmbedderTest, PresentInfoContainsValidFBOId) {
   frame_latch.Wait();
 }
 
+TEST_F(EmbedderTest, DisplayRefreshRateIsSet) {
+  auto& context = GetEmbedderContext();
+  fml::AutoResetWaitableEvent latch;
+  context.AddIsolateCreateCallback([&latch]() { latch.Signal(); });
+  EmbedderConfigBuilder builder(context);
+  builder.SetSoftwareRendererConfig();
+  constexpr float refresh_rate = 60.0f;
+  builder.SetDisplayRefreshRate(refresh_rate);
+  auto engine = builder.LaunchEngine();
+  ASSERT_TRUE(engine.is_valid());
+  // Wait for the root isolate to launch.
+  latch.Wait();
+
+  flutter::Shell& shell = ToEmbedderEngine(engine.get())->GetShell();
+  auto vsync_waiter = shell.GetPlatformView()->CreateVSyncWaiter();
+
+  const float embedder_refresh_rate = vsync_waiter->GetDisplayRefreshRate();
+  ASSERT_FLOAT_EQ(refresh_rate, embedder_refresh_rate);
+
+  engine.reset();
+}
+
+TEST_F(EmbedderTest, DefaultDisplayRefreshRateIsUnknown) {
+  auto& context = GetEmbedderContext();
+  fml::AutoResetWaitableEvent latch;
+  context.AddIsolateCreateCallback([&latch]() { latch.Signal(); });
+  EmbedderConfigBuilder builder(context);
+  builder.SetSoftwareRendererConfig();
+  auto engine = builder.LaunchEngine();
+  ASSERT_TRUE(engine.is_valid());
+  // Wait for the root isolate to launch.
+  latch.Wait();
+
+  flutter::Shell& shell = ToEmbedderEngine(engine.get())->GetShell();
+  auto vsync_waiter = shell.GetPlatformView()->CreateVSyncWaiter();
+
+  const float embedder_refresh_rate = vsync_waiter->GetDisplayRefreshRate();
+  ASSERT_FLOAT_EQ(flutter::VsyncWaiter::kUnknownRefreshRateFPS,
+                  embedder_refresh_rate);
+
+  engine.reset();
+}
+
 }  // namespace testing
 }  // namespace flutter

@@ -1318,6 +1318,12 @@ typedef struct {
   /// matches what the platform would natively resolve to as possible.
   FlutterComputePlatformResolvedLocaleCallback
       compute_platform_resolved_locale_callback;
+
+  /// The refresh rate of the display in frames per second.
+  ///
+  /// This information is purely advisory and is not used by any component. It
+  /// is only used by the tooling to visualize frame performance.
+  float display_refresh_rate;
 } FlutterProjectArgs;
 
 //------------------------------------------------------------------------------

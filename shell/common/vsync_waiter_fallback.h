@@ -17,10 +17,15 @@ class VsyncWaiterFallback final : public VsyncWaiter {
  public:
   VsyncWaiterFallback(TaskRunners task_runners);
 
+  VsyncWaiterFallback(TaskRunners task_runners, float display_refresh_rate);
+
   ~VsyncWaiterFallback() override;
 
+  float GetDisplayRefreshRate() const override;
+
  private:
-  fml::TimePoint phase_;
+  const fml::TimePoint phase_;
+  const float display_refresh_rate_;
 
   // |VsyncWaiter|
   void AwaitVSync() override;

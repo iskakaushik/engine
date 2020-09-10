@@ -46,6 +46,7 @@ extern const intptr_t kPlatformStrongDillSize;
 #include "flutter/shell/common/persistent_cache.h"
 #include "flutter/shell/common/rasterizer.h"
 #include "flutter/shell/common/switches.h"
+#include "flutter/shell/common/vsync_waiter.h"
 #include "flutter/shell/platform/embedder/embedder.h"
 #include "flutter/shell/platform/embedder/embedder_engine.h"
 #include "flutter/shell/platform/embedder/embedder_platform_message_response.h"
@@ -992,6 +993,9 @@ FlutterEngineResult FlutterEngineInitialize(size_t version,
                               "Compositor arguments were invalid.");
   }
 
+  float display_refresh_rate = SAFE_ACCESS(
+      args, display_refresh_rate, flutter::VsyncWaiter::kUnknownRefreshRateFPS);
+
   flutter::PlatformViewEmbedder::PlatformDispatchTable platform_dispatch_table =
       {
           update_semantics_nodes_callback,            //
@@ -999,6 +1003,7 @@ FlutterEngineResult FlutterEngineInitialize(size_t version,
           platform_message_response_callback,         //
           vsync_callback,                             //
           compute_platform_resolved_locale_callback,  //
+          display_refresh_rate,                       //
       };
 
   auto on_create_platform_view = InferPlatformViewCreationCallback(
