@@ -245,6 +245,7 @@ static bool OnAcquireExternalTexture(FlutterEngine* engine,
   flutterArguments.command_line_argv = &arguments[0];
   flutterArguments.platform_message_callback = (FlutterPlatformMessageCallback)OnPlatformMessage;
   flutterArguments.custom_dart_entrypoint = entrypoint.UTF8String;
+  flutterArguments.display_refresh_rate = [self displayRefreshRate];
   static size_t sTaskRunnerIdentifiers = 0;
   const FlutterTaskRunnerDescription cocoa_task_runner_description = {
       .struct_size = sizeof(FlutterTaskRunnerDescription),
@@ -315,6 +316,29 @@ static bool OnAcquireExternalTexture(FlutterEngine* engine,
     _resourceContext = [[NSOpenGLContext alloc] initWithFormat:pixelFormat shareContext:nil];
   }
   return _resourceContext;
+}
+
+- (float)displayRefreshRate {
+  NSDictionary* description = [[NSScreen mainScreen] deviceDescription];
+  CGDirectDisplayID displayId = [[description objectForKey:@"NSScreenNumber"] unsignedIntValue];
+  CGDisplayModeRef displayModeRef = CGDisplayCopyDisplayMode(displayId);
+  double refreshRate = CGDisplayModeGetRefreshRate(displayModeRef);
+
+  // The above can return zero always on some devices.
+  // See: https://github.com/glfw/glfw/issues/137
+  if (refreshRate == 0.0f) {
+    CVDisplayLinkRef displayLinkRef;
+    CVDisplayLinkCreateWithActiveCGDisplays(&displayLinkRef);
+
+    CVTime nominal = CVDisplayLinkGetNominalOutputVideoRefreshPeriod(displayLinkRef);
+    if (!(nominal.flags & kCVTimeIsIndefinite)) {
+      refreshRate = static_cast<double>(nominal.timeScale) / nominal.timeValue;
+    }
+
+    CVDisplayLinkRelease(displayLinkRef);
+  }
+
+  return static_cast<float>(refreshRate);
 }
 
 - (void)updateWindowMetrics {
