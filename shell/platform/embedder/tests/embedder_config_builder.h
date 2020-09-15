@@ -86,6 +86,10 @@ class EmbedderConfigBuilder {
 
   void SetCompositor();
 
+  /// Sets the `FlutterProjectArgs`'s display refresh rate to
+  /// `display_refresh_rate`. This is in frames per second.
+  void SetDisplayRefreshRate(double display_refresh_rate);
+
   FlutterCompositor& GetCompositor();
 
   UniqueEngine LaunchEngine() const;

@@ -112,6 +112,14 @@ class EmbedderTestContext {
   ///
   void SetGLPresentCallback(GLPresentCallback callback);
 
+  /// Sets the refresh rate of the display.
+  void SetDisplayRefreshRate(double refresh_rate);
+
+  /// Returns the last set refresh rate of the display. Returns zero otherwise.
+  ///
+  /// See: `SetDisplayRefreshRate`.
+  double GetDisplayRefreshRate() const;
+
  private:
   // This allows the builder to access the hooks.
   friend class EmbedderConfigBuilder;
@@ -139,6 +147,7 @@ class EmbedderTestContext {
   std::mutex gl_callback_mutex_;
   GLGetFBOCallback gl_get_fbo_callback_;
   GLPresentCallback gl_present_callback_;
+  double display_refresh_rate_ = 0;
 
   static VoidCallback GetIsolateCreateCallbackHook();
 
