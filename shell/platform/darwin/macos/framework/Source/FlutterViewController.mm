@@ -6,10 +6,10 @@
 #import "flutter/shell/platform/darwin/macos/framework/Headers/FlutterViewController.h"
 #import "flutter/shell/platform/darwin/macos/framework/Source/FlutterViewController_Internal.h"
 
-#include <memory>
-#include <string>
-#include <sstream>
 #include <iostream>
+#include <memory>
+#include <sstream>
+#include <string>
 
 #import "flutter/shell/platform/darwin/common/framework/Headers/FlutterChannels.h"
 #import "flutter/shell/platform/darwin/common/framework/Headers/FlutterCodecs.h"
@@ -20,8 +20,8 @@
 #import "flutter/shell/platform/darwin/macos/framework/Source/FlutterView.h"
 #import "flutter/shell/platform/embedder/embedder.h"
 
-#include "flutter/shell/platform/darwin/macos/framework/Source/FlutterPlatformViews_Internal.h"
 #include "flutter/shell/platform/darwin/macos/framework/Source/FlutterPlatformViews.h"
+#include "flutter/shell/platform/darwin/macos/framework/Source/FlutterPlatformViews_Internal.h"
 
 // Hardcoding platform view.
 
@@ -266,11 +266,10 @@ struct KeyboardState {
   // A method channel for miscellaneous platform functionality.
   FlutterMethodChannel* _platformChannel;
 
-    // A method channel for platform view functionality.
+  // A method channel for platform view functionality.
   FlutterMethodChannel* _platformViewsChannel;
 
   std::unique_ptr<flutter::FlutterPlatformViewsControllerMacOS> _platformViewsController;
-
 
   // flutter::FlutterPlatformViewsControllerMacOS* _platformViewsController;
 }
@@ -469,33 +468,32 @@ static void CommonInit(FlutterViewController* controller) {
     [weakSelf handleMethodCall:call result:result];
   }];
 
-  [_platformViewsChannel
-      setMethodCallHandler:^(FlutterMethodCall* call, FlutterResult result) {
-        // Create FlutterPlatformView Delegate protocol.
-        // Objective C to implement protocol.
-        // FlutterViewController can implement protocol for now as well.
-        // NSLog(@"hello world");
-        
-        // Try hardcoding this method call to render textview for now.
-        NSLog(@"platform-view-call");
+  [_platformViewsChannel setMethodCallHandler:^(FlutterMethodCall* call, FlutterResult result) {
+    // Create FlutterPlatformView Delegate protocol.
+    // Objective C to implement protocol.
+    // FlutterViewController can implement protocol for now as well.
+    // NSLog(@"hello world");
 
-        NSDictionary<NSString*, id>* args = [call arguments];
+    // Try hardcoding this method call to render textview for now.
+    NSLog(@"platform-view-call");
 
-        // long viewId = [args[@"id"] longValue];
-        std::string viewType([args[@"viewType"] UTF8String]);
+    NSDictionary<NSString*, id>* args = [call arguments];
 
-        printf("view type: %s", viewType.c_str());
+    long viewId = [args[@"id"] longValue];
+    std::string viewType([args[@"viewType"] UTF8String]);
 
-        MockFlutterPlatformFactory* factory = [MockFlutterPlatformFactory new];
-        printf("%d", factory == nil);
+    printf("view type: %s", viewType.c_str());
 
-        NSObject<FlutterPlatformView>* embedded_view = [factory createWithFrame:CGRectZero
-                                                           viewIdentifier:0
-                                                                arguments:nil];
+    MockFlutterPlatformFactory* factory = [MockFlutterPlatformFactory new];
+    printf("%d", factory == nil);
 
-        printf("embedded_view: %d", embedded_view == nil);
-        result(nil);
-      }];
+    NSObject<FlutterPlatformView>* embedded_view = [factory createWithFrame:CGRectZero
+                                                             viewIdentifier:viewId
+                                                                  arguments:nil];
+
+    printf("embedded_view: %d", embedded_view == nil);
+    result(nil);
+  }];
 }
 
 - (void)dispatchMouseEvent:(nonnull NSEvent*)event {

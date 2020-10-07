@@ -252,6 +252,36 @@ static bool OnAcquireExternalTexture(FlutterEngine* engine,
   flutterArguments.command_line_argv = argv.size() > 0 ? argv.data() : nullptr;
   flutterArguments.platform_message_callback = (FlutterPlatformMessageCallback)OnPlatformMessage;
   flutterArguments.custom_dart_entrypoint = entrypoint.UTF8String;
+
+  FlutterCompositor compositor;
+  compositor.struct_size = sizeof(compositor);
+  compositor.user_data = &compositor;
+
+  compositor.create_backing_store_callback = [](const FlutterBackingStoreConfig* config,  //
+                                                FlutterBackingStore* backing_store_out,   //
+                                                void* user_data                           //
+                                             ) {
+    NSLog(@"create_backing_store_callback");
+    return true;
+  };
+
+  compositor.collect_backing_store_callback = [](const FlutterBackingStore* backing_store,  //
+                                                 void* user_data                            //
+                                              ) {
+    NSLog(@"collect_backing_store_callback");
+    return true;
+  };
+
+  compositor.present_layers_callback = [](const FlutterLayer** layers,  //
+                                          size_t layers_count,          //
+                                          void* user_data               //
+                                       ) {
+    NSLog(@"present_layers_callback");
+    return true;
+  };
+
+  flutterArguments.compositor = &compositor;
+
   static size_t sTaskRunnerIdentifiers = 0;
   const FlutterTaskRunnerDescription cocoa_task_runner_description = {
       .struct_size = sizeof(FlutterTaskRunnerDescription),
