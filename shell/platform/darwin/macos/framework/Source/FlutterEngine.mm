@@ -4,10 +4,9 @@
 // FLUTTER_NOLINT
 
 #import "flutter/shell/platform/darwin/macos/framework/Headers/FlutterEngine.h"
-#import "flutter/shell/platform/darwin/macos/framework/Source/FlutterEngine_Internal.h"
-
 #include <algorithm>
 #include <vector>
+#import "flutter/shell/platform/darwin/macos/framework/Source/FlutterEngine_Internal.h"
 
 #import "flutter/shell/platform/darwin/macos/framework/Source/FlutterDartProject_Internal.h"
 #import "flutter/shell/platform/darwin/macos/framework/Source/FlutterExternalTextureGL.h"
