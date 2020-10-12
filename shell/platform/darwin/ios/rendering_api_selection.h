@@ -8,14 +8,9 @@
 #include <objc/runtime.h>
 
 #include "flutter/fml/macros.h"
+#import "flutter/shell/platform/darwin/common/render_context.h"
 
 namespace flutter {
-
-enum class IOSRenderingAPI {
-  kSoftware,
-  kOpenGLES,
-  kMetal,
-};
 
 // Pass force_software to force software rendering. This is only respected on
 // simulators.

@@ -29,6 +29,22 @@ source_set("common") {
   public_configs = [ "//flutter:config" ]
 }
 
+source_set("rendering") {
+  sources = [ "render_context.h" ]
+
+  deps = [
+    ":common",
+    ":framework_shared",
+    "//flutter/common",
+    "//flutter/flow",
+    "//flutter/fml",
+    "//flutter/runtime",
+    "//flutter/shell/common",
+    "//third_party/dart/runtime:dart_api",
+    "//third_party/skia",
+  ]
+}
+
 # Shared framework headers end up in the same folder as platform-specific
 # framework headers when consumed by clients, so the include paths assume they
 # are next to each other.

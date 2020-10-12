@@ -1,0 +1,34 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/common/config.gni")
+import("//flutter/shell/gpu/gpu.gni")
+
+assert(shell_enable_metal)
+
+source_set("darwin_metal_sources") {
+  defines = [ "FLUTTER_SHELL_ENABLE_METAL=1" ]
+
+  sources = [
+    "darwin_context_metal.h",
+    "darwin_context_metal.mm",
+    "darwin_external_texture_metal.h",
+    "darwin_external_texture_metal.mm",
+    "darwin_surface_metal.h",
+    "darwin_surface_metal.mm",
+  ]
+
+  deps = [
+    "//flutter/common",
+    "//flutter/flow:flow",
+    "//flutter/fml",
+    "//flutter/shell/common",
+    "//flutter/shell/gpu:gpu_surface_metal",
+    "//flutter/shell/platform/darwin/common",
+    "//flutter/shell/platform/darwin/common:framework_shared",
+    "//flutter/shell/platform/darwin/common:rendering",
+    "//flutter/shell/profiling:profiling",
+    "//third_party/skia",
+  ]
+}

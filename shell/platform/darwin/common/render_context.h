@@ -12,10 +12,15 @@
 #include "flutter/fml/macros.h"
 #include "flutter/fml/platform/darwin/scoped_nsobject.h"
 #import "flutter/shell/platform/darwin/common/framework/Headers/FlutterTexture.h"
-#import "flutter/shell/platform/darwin/ios/rendering_api_selection.h"
 #include "third_party/skia/include/gpu/GrDirectContext.h"
 
 namespace flutter {
+
+enum class IOSRenderingAPI {
+  kSoftware,
+  kOpenGLES,
+  kMetal,
+};
 
 //------------------------------------------------------------------------------
 /// @brief      Manages the lifetime of the on-screen and off-screen rendering

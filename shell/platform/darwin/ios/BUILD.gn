@@ -85,7 +85,6 @@ source_set("flutter_framework_source") {
     "framework/Source/profiler_metrics_ios.mm",
     "framework/Source/vsync_waiter_ios.h",
     "framework/Source/vsync_waiter_ios.mm",
-    "ios_context.h",
     "ios_context.mm",
     "ios_context_gl.h",
     "ios_context_gl.mm",
@@ -113,19 +112,6 @@ source_set("flutter_framework_source") {
 
   defines = [ "FLUTTER_FRAMEWORK=1" ]
 
-  if (shell_enable_metal) {
-    defines += [ "FLUTTER_SHELL_ENABLE_METAL=1" ]
-
-    sources += [
-      "ios_context_metal.h",
-      "ios_context_metal.mm",
-      "ios_external_texture_metal.h",
-      "ios_external_texture_metal.mm",
-      "ios_surface_metal.h",
-      "ios_surface_metal.mm",
-    ]
-  }
-
   deps = [
     ":ios_gpu_configuration",
     "//flutter/common",
@@ -137,9 +123,14 @@ source_set("flutter_framework_source") {
     "//flutter/shell/common",
     "//flutter/shell/platform/darwin/common",
     "//flutter/shell/platform/darwin/common:framework_shared",
+    "//flutter/shell/platform/darwin/common:rendering",
     "//flutter/shell/profiling:profiling",
     "//third_party/skia",
   ]
+
+  if (shell_enable_metal) {
+    deps += [ "../common/metal:darwin_metal_sources" ]
+  }
 
   public_configs = [ "//flutter:config" ]
 
