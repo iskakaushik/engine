@@ -131,6 +131,8 @@ static bool IsRendererValid(const FlutterRendererConfig* config) {
       return IsOpenGLRendererConfigValid(config);
     case kSoftware:
       return IsSoftwareRendererConfigValid(config);
+    case kMetal:
+      return true;
     default:
       return false;
   }
