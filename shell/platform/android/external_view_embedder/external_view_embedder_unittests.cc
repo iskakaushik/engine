@@ -34,11 +34,6 @@ class SurfaceMock : public Surface {
 
   MOCK_METHOD(GrDirectContext*, GetContext, (), (override));
 
-  MOCK_METHOD(flutter::ExternalViewEmbedder*,
-              GetExternalViewEmbedder,
-              (),
-              (override));
-
   MOCK_METHOD(std::unique_ptr<GLContextResult>,
               MakeRenderContextCurrent,
               (),

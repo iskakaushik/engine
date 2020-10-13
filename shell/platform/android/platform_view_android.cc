@@ -287,6 +287,13 @@ std::unique_ptr<Surface> PlatformViewAndroid::CreateRenderingSurface() {
 }
 
 // |PlatformView|
+std::shared_ptr<ExternalViewEmbedder>
+PlatformViewAndroid::CreateExternalViewEmbedder() {
+  return std::make_shared<AndroidExternalViewEmbedder>(
+      android_context, jni_facade, surface_factory);
+}
+
+// |PlatformView|
 sk_sp<GrDirectContext> PlatformViewAndroid::CreateResourceContext() const {
   if (!android_surface_) {
     return nullptr;

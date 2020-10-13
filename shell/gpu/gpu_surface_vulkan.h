@@ -36,9 +36,6 @@ class GPUSurfaceVulkan : public Surface {
   // |Surface|
   GrDirectContext* GetContext() override;
 
-  // |Surface|
-  flutter::ExternalViewEmbedder* GetExternalViewEmbedder() override;
-
  private:
   vulkan::VulkanWindow window_;
   GPUSurfaceVulkanDelegate* delegate_;

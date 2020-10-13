@@ -122,6 +122,9 @@ class PlatformView final : public flutter::PlatformView,
   void HandlePlatformMessage(
       fml::RefPtr<flutter::PlatformMessage> message) override;
 
+  // |PlatformView|
+  std::shared_ptr<ExternalViewEmbedder> CreateExternalViewEmbedder() override;
+
   // |flutter::PlatformView|
   void UpdateSemantics(
       flutter::SemanticsNodeUpdates update,

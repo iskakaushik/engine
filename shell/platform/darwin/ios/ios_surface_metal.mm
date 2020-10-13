@@ -53,9 +53,4 @@ std::unique_ptr<Surface> IOSSurfaceMetal::CreateGPUSurface(GrDirectContext* /* u
   );
 }
 
-// |GPUSurfaceDelegate|
-ExternalViewEmbedder* IOSSurfaceMetal::GetExternalViewEmbedder() {
-  return this;
-}
-
 }  // namespace flutter

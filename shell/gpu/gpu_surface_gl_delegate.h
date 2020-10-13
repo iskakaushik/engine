@@ -25,9 +25,6 @@ class GPUSurfaceGLDelegate : public GPUSurfaceDelegate {
  public:
   ~GPUSurfaceGLDelegate() override;
 
-  // |GPUSurfaceDelegate|
-  ExternalViewEmbedder* GetExternalViewEmbedder() override;
-
   // Called to make the main GL context current on the current thread.
   virtual std::unique_ptr<GLContextResult> GLContextMakeCurrent() = 0;
 

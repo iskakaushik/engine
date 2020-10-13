@@ -23,11 +23,7 @@ AndroidSurfaceGL::AndroidSurfaceGL(
     std::shared_ptr<AndroidContext> android_context,
     std::shared_ptr<PlatformViewAndroidJNI> jni_facade,
     const AndroidSurface::Factory& surface_factory)
-    : external_view_embedder_(
-          std::make_unique<AndroidExternalViewEmbedder>(android_context,
-                                                        jni_facade,
-                                                        surface_factory)),
-      android_context_(
+    : android_context_(
           std::static_pointer_cast<AndroidContextGL>(android_context)),
       native_window_(nullptr),
       onscreen_surface_(nullptr),
@@ -133,11 +129,6 @@ intptr_t AndroidSurfaceGL::GLContextFBO(GLFrameInfo frame_info) const {
   FML_DCHECK(IsValid());
   // The default window bound framebuffer on Android.
   return 0;
-}
-
-// |GPUSurfaceGLDelegate|
-ExternalViewEmbedder* AndroidSurfaceGL::GetExternalViewEmbedder() {
-  return external_view_embedder_.get();
 }
 
 // |GPUSurfaceGLDelegate|

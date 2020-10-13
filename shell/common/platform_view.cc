@@ -95,6 +95,13 @@ sk_sp<GrDirectContext> PlatformView::CreateResourceContext() const {
   return nullptr;
 }
 
+std::shared_ptr<ExternalViewEmbedder>
+PlatformView::CreateExternalViewEmbedder() {
+  FML_DLOG(WARNING)
+      << "This platform can not embed externally composited views.";
+  return nullptr;
+}
+
 void PlatformView::ReleaseResourceContext() const {}
 
 PointerDataDispatcherMaker PlatformView::GetDispatcherMaker() {

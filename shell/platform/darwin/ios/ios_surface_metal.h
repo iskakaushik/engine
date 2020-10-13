@@ -37,9 +37,6 @@ class SK_API_AVAILABLE_CA_METAL_LAYER IOSSurfaceMetal final : public IOSSurface,
   // |IOSSurface|
   std::unique_ptr<Surface> CreateGPUSurface(GrDirectContext* gr_context) override;
 
-  // |GPUSurfaceDelegate|
-  ExternalViewEmbedder* GetExternalViewEmbedder() override;
-
   FML_DISALLOW_COPY_AND_ASSIGN(IOSSurfaceMetal);
 };
 

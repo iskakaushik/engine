@@ -49,7 +49,7 @@ class PlatformViewEmbedder final : public PlatformView {
       flutter::TaskRunners task_runners,
       EmbedderSurfaceSoftware::SoftwareDispatchTable software_dispatch_table,
       PlatformDispatchTable platform_dispatch_table,
-      std::unique_ptr<EmbedderExternalViewEmbedder> external_view_embedder);
+      std::shared_ptr<EmbedderExternalViewEmbedder> external_view_embedder);
 
 #ifdef SHELL_ENABLE_GL
   // Creates a platform view that sets up an OpenGL rasterizer.
@@ -59,7 +59,7 @@ class PlatformViewEmbedder final : public PlatformView {
       EmbedderSurfaceGL::GLDispatchTable gl_dispatch_table,
       bool fbo_reset_after_present,
       PlatformDispatchTable platform_dispatch_table,
-      std::unique_ptr<EmbedderExternalViewEmbedder> external_view_embedder);
+      std::shared_ptr<EmbedderExternalViewEmbedder> external_view_embedder);
 #endif
 
   ~PlatformViewEmbedder() override;
@@ -75,6 +75,7 @@ class PlatformViewEmbedder final : public PlatformView {
 
  private:
   std::unique_ptr<EmbedderSurface> embedder_surface_;
+  std::shared_ptr<ExternalViewEmbedder> external_view_embedder_;
   PlatformDispatchTable platform_dispatch_table_;
 
   // |PlatformView|
@@ -82,6 +83,9 @@ class PlatformViewEmbedder final : public PlatformView {
 
   // |PlatformView|
   sk_sp<GrDirectContext> CreateResourceContext() const override;
+
+  // |PlatformView|
+  std::shared_ptr<ExternalViewEmbedder> CreateExternalViewEmbedder() override;
 
   // |PlatformView|
   std::unique_ptr<VsyncWaiter> CreateVSyncWaiter() override;

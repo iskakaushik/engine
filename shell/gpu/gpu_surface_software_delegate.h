@@ -29,9 +29,6 @@ class GPUSurfaceSoftwareDelegate : public GPUSurfaceDelegate {
  public:
   ~GPUSurfaceSoftwareDelegate() override;
 
-  // |GPUSurfaceDelegate|
-  ExternalViewEmbedder* GetExternalViewEmbedder() override;
-
   //----------------------------------------------------------------------------
   /// @brief      Called when the GPU surface needs a new buffer to render a new
   ///             frame into.

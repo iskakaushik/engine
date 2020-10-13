@@ -9,7 +9,6 @@
 #include "flutter/fml/platform/android/jni_weak_ref.h"
 #include "flutter/fml/platform/android/scoped_java_ref.h"
 #include "flutter/shell/gpu/gpu_surface_software.h"
-#include "flutter/shell/platform/android/external_view_embedder/external_view_embedder.h"
 #include "flutter/shell/platform/android/jni/platform_view_android_jni.h"
 #include "flutter/shell/platform/android/surface/android_surface.h"
 
@@ -52,12 +51,7 @@ class AndroidSurfaceSoftware final : public AndroidSurface,
   // |GPUSurfaceSoftwareDelegate|
   bool PresentBackingStore(sk_sp<SkSurface> backing_store) override;
 
-  // |GPUSurfaceSoftwareDelegate|
-  ExternalViewEmbedder* GetExternalViewEmbedder() override;
-
  private:
-  const std::unique_ptr<AndroidExternalViewEmbedder> external_view_embedder_;
-
   sk_sp<SkSurface> sk_surface_;
   fml::RefPtr<AndroidNativeWindow> native_window_;
   SkColorType target_color_type_;

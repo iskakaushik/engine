@@ -68,8 +68,4 @@ GrDirectContext* GPUSurfaceVulkan::GetContext() {
   return window_.GetSkiaGrContext();
 }
 
-flutter::ExternalViewEmbedder* GPUSurfaceVulkan::GetExternalViewEmbedder() {
-  return delegate_->GetExternalViewEmbedder();
-}
-
 }  // namespace flutter

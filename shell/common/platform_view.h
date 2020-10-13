@@ -447,6 +447,8 @@ class PlatformView {
   ///             on platforms.
   virtual PointerDataDispatcherMaker GetDispatcherMaker();
 
+  virtual std::shared_ptr<ExternalViewEmbedder> CreateExternalViewEmbedder();
+
   //----------------------------------------------------------------------------
   /// @brief      Returns a weak pointer to the platform view. Since the
   ///             platform view may only be created, accessed and destroyed

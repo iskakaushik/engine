@@ -123,11 +123,6 @@ GrDirectContext* GPUSurfaceMetal::GetContext() {
 }
 
 // |Surface|
-flutter::ExternalViewEmbedder* GPUSurfaceMetal::GetExternalViewEmbedder() {
-  return delegate_->GetExternalViewEmbedder();
-}
-
-// |Surface|
 std::unique_ptr<GLContextResult> GPUSurfaceMetal::MakeRenderContextCurrent() {
   // This backend has no such concept.
   return std::make_unique<GLContextDefaultResult>(true);

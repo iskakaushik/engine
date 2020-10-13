@@ -73,10 +73,5 @@ ShellTestPlatformViewGL::GetGLProcResolver() const {
   };
 }
 
-// |GPUSurfaceGLDelegate|
-ExternalViewEmbedder* ShellTestPlatformViewGL::GetExternalViewEmbedder() {
-  return shell_test_external_view_embedder_.get();
-}
-
 }  // namespace testing
 }  // namespace flutter

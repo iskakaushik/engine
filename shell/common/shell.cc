@@ -58,7 +58,9 @@ std::unique_ptr<Shell> Shell::CreateShellOnPlatformThread(
 
   // Create the rasterizer on the raster thread.
   std::promise<std::unique_ptr<Rasterizer>> rasterizer_promise;
+  std::promise<std::shared_ptr<ExternalViewEmbedder>> view_embedder_promise;
   auto rasterizer_future = rasterizer_promise.get_future();
+  auto view_embedder_future = view_embedder_promise.get_future();
   std::promise<fml::WeakPtr<SnapshotDelegate>> snapshot_delegate_promise;
   auto snapshot_delegate_future = snapshot_delegate_promise.get_future();
   fml::TaskRunner::RunNowOrPostTask(
@@ -78,6 +80,8 @@ std::unique_ptr<Shell> Shell::CreateShellOnPlatformThread(
   if (!platform_view || !platform_view->GetWeakPtr()) {
     return nullptr;
   }
+
+  view_embedder_promise.set_value(platform_view->CreateExternalViewEmbedder());
 
   // Ask the platform view for the vsync waiter. This will be used by the engine
   // to create the animator.
@@ -164,10 +168,11 @@ std::unique_ptr<Shell> Shell::CreateShellOnPlatformThread(
             ));
       }));
 
-  if (!shell->Setup(std::move(platform_view),  //
-                    engine_future.get(),       //
-                    rasterizer_future.get(),   //
-                    io_manager_future.get())   //
+  if (!shell->Setup(std::move(platform_view),    //
+                    engine_future.get(),         //
+                    rasterizer_future.get(),     //
+                    io_manager_future.get(),     //
+                    view_embedder_future.get())  //
   ) {
     return nullptr;
   }
@@ -534,7 +539,8 @@ bool Shell::IsSetup() const {
 bool Shell::Setup(std::unique_ptr<PlatformView> platform_view,
                   std::unique_ptr<Engine> engine,
                   std::unique_ptr<Rasterizer> rasterizer,
-                  std::unique_ptr<ShellIOManager> io_manager) {
+                  std::unique_ptr<ShellIOManager> io_manager,
+                  std::shared_ptr<ExternalViewEmbedder> view_embedder) {
   if (is_setup_) {
     return false;
   }
@@ -547,6 +553,7 @@ bool Shell::Setup(std::unique_ptr<PlatformView> platform_view,
   engine_ = std::move(engine);
   rasterizer_ = std::move(rasterizer);
   io_manager_ = std::move(io_manager);
+  external_view_embedder_ = view_embedder;
 
   // The weak ptr must be generated in the platform thread which owns the unique
   // ptr.

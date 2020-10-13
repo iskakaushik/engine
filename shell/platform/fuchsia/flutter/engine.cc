@@ -591,7 +591,7 @@ std::unique_ptr<flutter::Surface> Engine::CreateSurface() {
   }
   FML_CHECK(external_view_embedder);
 
-  return std::make_unique<Surface>(thread_label_, external_view_embedder,
+  return std::make_unique<Surface>(thread_label_,
                                    surface_producer_->gr_context());
 }
 

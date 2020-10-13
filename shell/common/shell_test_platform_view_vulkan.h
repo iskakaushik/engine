@@ -47,8 +47,6 @@ class ShellTestPlatformViewVulkan : public ShellTestPlatformView {
     // |Surface|
     GrDirectContext* GetContext() override;
 
-    flutter::ExternalViewEmbedder* GetExternalViewEmbedder() override;
-
    private:
     bool valid_;
     fml::RefPtr<vulkan::VulkanProcTable> vk_;
@@ -81,6 +79,9 @@ class ShellTestPlatformViewVulkan : public ShellTestPlatformView {
 
   // |PlatformView|
   PointerDataDispatcherMaker GetDispatcherMaker() override;
+
+  // |PlatformView|
+  std::shared_ptr<ExternalViewEmbedder> CreateExternalViewEmbedder() override;
 
   FML_DISALLOW_COPY_AND_ASSIGN(ShellTestPlatformViewVulkan);
 };

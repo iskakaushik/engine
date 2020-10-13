@@ -15,9 +15,6 @@ class GPUSurfaceVulkanDelegate : public GPUSurfaceDelegate {
  public:
   ~GPUSurfaceVulkanDelegate() override;
 
-  // |GPUSurfaceDelegate|
-  ExternalViewEmbedder* GetExternalViewEmbedder() override;
-
   // Obtain a reference to the Vulkan implementation's proc table.
   virtual fml::RefPtr<vulkan::VulkanProcTable> vk() = 0;
 };
