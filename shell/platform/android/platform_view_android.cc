@@ -20,6 +20,7 @@
 #endif  // SHELL_ENABLE_VULKAN
 
 #include "flutter/shell/platform/android/context/android_context.h"
+#include "flutter/shell/platform/android/external_view_embedder/external_view_embedder.h"
 #include "flutter/shell/platform/android/jni/platform_view_android_jni.h"
 #include "flutter/shell/platform/android/platform_message_response_android.h"
 #include "flutter/shell/platform/android/vsync_waiter_android.h"
@@ -72,7 +73,8 @@ PlatformViewAndroid::PlatformViewAndroid(
   FML_CHECK(android_context && android_context->IsValid())
       << "Could not create an Android context.";
 
-  android_surface_ = SurfaceFactory(std::move(android_context), jni_facade);
+  android_context_ = android_context;
+  android_surface_ = SurfaceFactory(android_context, jni_facade);
   FML_CHECK(android_surface_ && android_surface_->IsValid())
       << "Could not create an OpenGL, Vulkan or Software surface to setup "
          "rendering.";
@@ -290,7 +292,7 @@ std::unique_ptr<Surface> PlatformViewAndroid::CreateRenderingSurface() {
 std::shared_ptr<ExternalViewEmbedder>
 PlatformViewAndroid::CreateExternalViewEmbedder() {
   return std::make_shared<AndroidExternalViewEmbedder>(
-      android_context, jni_facade, surface_factory);
+      android_context_, jni_facade_, SurfaceFactory);
 }
 
 // |PlatformView|
