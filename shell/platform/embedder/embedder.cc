@@ -345,7 +345,7 @@ static sk_sp<SkSurface> MakeSkSurfaceFromBackingStore(
     GrDirectContext* context,
     const FlutterBackingStoreConfig& config,
     const FlutterOpenGLTexture* texture) {
-    printf("\nMakeSkSurfaceFromBackingStore\n");
+  printf("\n1 MakeSkSurfaceFromBackingStore\n");
 #ifdef SHELL_ENABLE_GL
   GrGLTextureInfo texture_info;
   texture_info.fTarget = texture->target;
@@ -389,7 +389,7 @@ static sk_sp<SkSurface> MakeSkSurfaceFromBackingStore(
     GrDirectContext* context,
     const FlutterBackingStoreConfig& config,
     const FlutterOpenGLFramebuffer* framebuffer) {
-    printf("\nMakeSkSurfaceFromBackingStore\n");
+  printf("\n2 MakeSkSurfaceFromBackingStore\n");
 #ifdef SHELL_ENABLE_GL
   GrGLFramebufferInfo framebuffer_info = {};
   framebuffer_info.fFormat = framebuffer->target;
@@ -514,6 +514,7 @@ CreateEmbedderRenderTarget(const FlutterCompositor* compositor,
         case kFlutterOpenGLTargetTypeFramebuffer:
           render_surface = MakeSkSurfaceFromBackingStore(
               context, config, &backing_store.open_gl.framebuffer);
+          FML_LOG(ERROR) << "yup!!!";
           break;
       }
       break;
