@@ -88,6 +88,18 @@ template("embedder_source_set") {
       "//third_party/skia",
     ]
 
+    if (embedder_enable_metal) {
+      sources += [
+        "embedder_surface_metal.h",
+        "embedder_surface_metal.mm",
+      ]
+
+      cflags_objc = flutter_cflags_objc
+      cflags_objcc = flutter_cflags_objcc
+
+      deps += [ "//flutter/shell/platform/darwin/graphics" ]
+    }
+
     public_deps = [ ":embedder_headers" ]
 
     public_configs += [
@@ -207,6 +219,16 @@ if (enable_unittests) {
       ]
 
       deps += [ "//flutter/testing:opengl" ]
+    }
+
+    if (test_enable_metal) {
+      sources += [
+        "tests/embedder_test_context_metal.cc",
+        "tests/embedder_test_context_metal.h",
+        "tests/embedder_unittests_metal.cc",
+      ]
+
+      deps += [ "//flutter/testing:metal" ]
     }
   }
 

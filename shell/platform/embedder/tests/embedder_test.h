@@ -21,6 +21,7 @@ class EmbedderTest : public ThreadTest {
   enum class ContextType {
     kSoftwareContext,
     kOpenGLContext,
+    kMetalContext,
   };
 
   EmbedderTest();

@@ -3,12 +3,12 @@
 // found in the LICENSE file.
 
 #include "flutter/shell/platform/embedder/tests/embedder_test_context_gl.h"
-#include "flutter/shell/platform/embedder/tests/embedder_test_compositor_gl.h"
 
 #include "flutter/fml/make_copyable.h"
 #include "flutter/fml/paths.h"
 #include "flutter/runtime/dart_vm.h"
 #include "flutter/shell/platform/embedder/tests/embedder_assertions.h"
+#include "flutter/shell/platform/embedder/tests/embedder_test_compositor_gl.h"
 #include "flutter/testing/testing.h"
 #include "third_party/dart/runtime/bin/elf_loader.h"
 #include "third_party/skia/include/core/SkSurface.h"

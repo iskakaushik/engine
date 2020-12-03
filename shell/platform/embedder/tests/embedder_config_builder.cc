@@ -6,11 +6,17 @@
 
 #include "flutter/runtime/dart_vm.h"
 #include "flutter/shell/platform/embedder/embedder.h"
+#include "include/core/SkSize.h"
+#include "testing/test_metal_context.h"
 #include "third_party/skia/include/core/SkBitmap.h"
 
 #ifdef SHELL_ENABLE_GL
 #include "flutter/shell/platform/embedder/tests/embedder_test_compositor_gl.h"
 #include "flutter/shell/platform/embedder/tests/embedder_test_context_gl.h"
+#endif
+
+#ifdef SHELL_ENABLE_METAL
+#include "flutter/shell/platform/embedder/tests/embedder_test_context_metal.h"
 #endif
 
 namespace flutter {
@@ -63,6 +69,10 @@ EmbedderConfigBuilder::EmbedderConfigBuilder(
     return reinterpret_cast<EmbedderTestContext*>(context)
         ->GetRootSurfaceTransformation();
   };
+#endif
+
+#ifdef SHELL_ENABLE_METAL
+  InitializeMetalRendererConfig();
 #endif
 
   software_renderer_config_.struct_size = sizeof(FlutterSoftwareRendererConfig);
@@ -149,6 +159,14 @@ void EmbedderConfigBuilder::SetOpenGLRendererConfig(SkISize surface_size) {
 #ifdef SHELL_ENABLE_GL
   renderer_config_.type = FlutterRendererType::kOpenGL;
   renderer_config_.open_gl = opengl_renderer_config_;
+  context_.SetupSurface(surface_size);
+#endif
+}
+
+void EmbedderConfigBuilder::SetMetalRendererConfig(SkISize surface_size) {
+#ifdef SHELL_ENABLE_METAL
+  renderer_config_.type = FlutterRendererType::kMetal;
+  renderer_config_.metal = metal_renderer_config_;
   context_.SetupSurface(surface_size);
 #endif
 }
@@ -355,6 +373,40 @@ UniqueEngine EmbedderConfigBuilder::SetupEngine(bool run) const {
 
   return UniqueEngine{engine};
 }
+
+#ifdef SHELL_ENABLE_METAL
+
+void EmbedderConfigBuilder::InitializeMetalRendererConfig() {
+  metal_renderer_config_.struct_size = sizeof(metal_renderer_config_);
+  EmbedderTestContextMetal& metal_context =
+      reinterpret_cast<EmbedderTestContextMetal&>(context_);
+  metal_renderer_config_.device =
+      metal_context.GetTestMetalContext()->GetMetalDevice();
+  metal_renderer_config_.command_queue =
+      metal_context.GetTestMetalContext()->GetMetalCommandQueue();
+  metal_renderer_config_.texture_callback =
+      [](void* user_data, const FlutterFrameInfo* frame_info,
+         FlutterMetalTexture* texture_out) {
+        EmbedderTestContextMetal* metal_context =
+            reinterpret_cast<EmbedderTestContextMetal*>(user_data);
+        SkISize surface_size =
+            SkISize::Make(frame_info->size.width, frame_info->size.height);
+        texture_out->struct_size = sizeof(FlutterMetalTexture);
+        TestMetalContext::TextureInfo texture_info =
+            metal_context->GetTestMetalContext()->CreateMetalTexture(
+                surface_size);
+        texture_out->texture_id = texture_info.texture_id;
+        texture_out->texture = texture_info.texture;
+      };
+  metal_renderer_config_.present_callback = [](void* user_data,
+                                               int64_t texture_id) -> bool {
+    EmbedderTestContextMetal* metal_context =
+        reinterpret_cast<EmbedderTestContextMetal*>(user_data);
+    return metal_context->GetTestMetalContext()->Present(texture_id);
+  };
+}
+
+#endif  // SHELL_ENABLE_METAL
 
 }  // namespace testing
 }  // namespace flutter

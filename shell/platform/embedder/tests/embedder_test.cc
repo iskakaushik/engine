@@ -9,6 +9,10 @@
 #include "flutter/shell/platform/embedder/tests/embedder_test_context_gl.h"
 #endif
 
+#ifdef SHELL_ENABLE_METAL
+#include "flutter/shell/platform/embedder/tests/embedder_test_context_metal.h"
+#endif
+
 namespace flutter {
 namespace testing {
 
@@ -32,6 +36,12 @@ EmbedderTestContext& EmbedderTest::GetEmbedderContext(ContextType type) {
       case ContextType::kOpenGLContext:
         embedder_contexts_[type] =
             std::make_unique<EmbedderTestContextGL>(GetFixturesDirectory());
+        break;
+#endif
+#ifdef SHELL_ENABLE_METAL
+      case ContextType::kMetalContext:
+        embedder_contexts_[type] =
+            std::make_unique<EmbedderTestContextMetal>(GetFixturesDirectory());
         break;
 #endif
       default:

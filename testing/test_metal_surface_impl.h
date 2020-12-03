@@ -6,20 +6,22 @@
 #define FLUTTER_TESTING_TEST_METAL_SURFACE_IMPL_H_
 
 #include "flutter/fml/macros.h"
+#include "flutter/testing/test_metal_context.h"
 #include "flutter/testing/test_metal_surface.h"
 
 namespace flutter {
 
 class TestMetalSurfaceImpl : public TestMetalSurface {
  public:
-  TestMetalSurfaceImpl(SkISize surface_size);
+  TestMetalSurfaceImpl(TestMetalContext& test_metal_context,
+                       const SkISize& surface_size);
 
   // |TestMetalSurface|
   ~TestMetalSurfaceImpl() override;
 
  private:
+  TestMetalContext& test_metal_context_;
   bool is_valid_ = false;
-  sk_sp<GrDirectContext> context_;
   sk_sp<SkSurface> surface_;
 
   // |TestMetalSurface|

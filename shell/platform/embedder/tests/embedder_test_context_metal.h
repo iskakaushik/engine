@@ -1,0 +1,44 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+#ifndef FLUTTER_SHELL_PLATFORM_EMBEDDER_TESTS_EMBEDDER_CONTEXT_METAL_H_
+#define FLUTTER_SHELL_PLATFORM_EMBEDDER_TESTS_EMBEDDER_CONTEXT_METAL_H_
+
+#include "flutter/shell/platform/embedder/tests/embedder_test_context.h"
+#include "flutter/testing/test_metal_surface.h"
+#include "testing/test_metal_context.h"
+
+namespace flutter {
+namespace testing {
+
+class EmbedderTestContextMetal : public EmbedderTestContext {
+ public:
+  explicit EmbedderTestContextMetal(std::string assets_path = "");
+
+  ~EmbedderTestContextMetal() override;
+
+  // |EmbedderTestContext|
+  size_t GetSurfacePresentCount() const override;
+
+  // |EmbedderTestContext|
+  void SetupCompositor() override;
+
+  TestMetalContext* GetTestMetalContext();
+
+ private:
+  // This allows the builder to access the hooks.
+  friend class EmbedderConfigBuilder;
+
+  std::unique_ptr<TestMetalContext> metal_context_;
+  std::unique_ptr<TestMetalSurface> metal_surface_;
+
+  void SetupSurface(SkISize surface_size) override;
+
+  FML_DISALLOW_COPY_AND_ASSIGN(EmbedderTestContextMetal);
+};
+
+}  // namespace testing
+}  // namespace flutter
+
+#endif  // FLUTTER_SHELL_PLATFORM_EMBEDDER_TESTS_EMBEDDER_CONTEXT_METAL_H_
