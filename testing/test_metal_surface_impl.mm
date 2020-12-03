@@ -13,14 +13,8 @@
 
 namespace flutter {
 
-TestMetalSurfaceImpl::TestMetalSurfaceImpl(TestMetalContext& test_metal_context,
-                                           const SkISize& surface_size)
-    : test_metal_context_(test_metal_context) {
-  if (surface_size.isEmpty()) {
-    FML_LOG(ERROR) << "Size of test Metal surface was empty.";
-    return;
-  }
-
+void TestMetalSurfaceImpl::Init(const TestMetalContext::TextureInfo& texture_info,
+                                const SkISize& surface_size) {
   auto texture_descriptor = fml::scoped_nsobject{
       [[MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatBGRA8Unorm
                                                           width:surface_size.width()
@@ -37,7 +31,6 @@ TestMetalSurfaceImpl::TestMetalSurfaceImpl(TestMetalContext& test_metal_context,
     return;
   }
 
-  TestMetalContext::TextureInfo texture_info = test_metal_context_.CreateMetalTexture(surface_size);
   id<MTLTexture> texture = (__bridge id<MTLTexture>)texture_info.texture;
   GrMtlTextureInfo skia_texture_info;
   skia_texture_info.fTexture = sk_cf_obj<const void*>{[texture retain]};
@@ -67,6 +60,27 @@ TestMetalSurfaceImpl::TestMetalSurfaceImpl(TestMetalContext& test_metal_context,
 
   surface_ = std::move(surface);
   is_valid_ = true;
+}
+
+TestMetalSurfaceImpl::TestMetalSurfaceImpl(const TestMetalContext& test_metal_context,
+                                           int64_t texture_id,
+                                           const SkISize& surface_size)
+    : test_metal_context_(test_metal_context) {
+  TestMetalContext::TextureInfo texture_info =
+      const_cast<TestMetalContext&>(test_metal_context_).GetTextureInfo(texture_id);
+  Init(texture_info, surface_size);
+}
+
+TestMetalSurfaceImpl::TestMetalSurfaceImpl(const TestMetalContext& test_metal_context,
+                                           const SkISize& surface_size)
+    : test_metal_context_(test_metal_context) {
+  if (surface_size.isEmpty()) {
+    FML_LOG(ERROR) << "Size of test Metal surface was empty.";
+    return;
+  }
+  TestMetalContext::TextureInfo texture_info =
+      const_cast<TestMetalContext&>(test_metal_context_).CreateMetalTexture(surface_size);
+  Init(texture_info, surface_size);
 }
 
 sk_sp<SkImage> TestMetalSurfaceImpl::GetRasterSurfaceSnapshot() {

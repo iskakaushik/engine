@@ -7,6 +7,7 @@
 
 #include "flutter/shell/platform/embedder/tests/embedder_test_context.h"
 #include "flutter/testing/test_metal_surface.h"
+#include "include/core/SkSize.h"
 #include "testing/test_metal_context.h"
 
 namespace flutter {
@@ -32,8 +33,8 @@ class EmbedderTestContextMetal : public EmbedderTestContext {
   // This allows the builder to access the hooks.
   friend class EmbedderConfigBuilder;
 
+  SkISize surface_size_ = SkISize::MakeEmpty();
   std::unique_ptr<TestMetalContext> metal_context_;
-  std::unique_ptr<TestMetalSurface> metal_surface_;
 
   void SetupSurface(SkISize surface_size) override;
 

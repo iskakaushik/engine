@@ -34,6 +34,8 @@ class TestMetalContext {
 
   bool Present(int64_t texture_id);
 
+  TextureInfo GetTextureInfo(int64_t texture_id);
+
  private:
   void* device_;
   void* command_queue_;

@@ -22,7 +22,12 @@ class TestMetalSurface {
   static bool PlatformSupportsMetal();
 
   static std::unique_ptr<TestMetalSurface> Create(
-      TestMetalContext& test_metal_context,
+      const TestMetalContext& test_metal_context,
+      SkISize surface_size = SkISize::MakeEmpty());
+
+  static std::unique_ptr<TestMetalSurface> Create(
+      const TestMetalContext& test_metal_context,
+      int64_t texture_id,
       SkISize surface_size = SkISize::MakeEmpty());
 
   virtual ~TestMetalSurface();
@@ -41,7 +46,7 @@ class TestMetalSurface {
  private:
   std::unique_ptr<TestMetalSurface> impl_;
 
-  TestMetalSurface(std::unique_ptr<TestMetalSurface> impl);
+  explicit TestMetalSurface(std::unique_ptr<TestMetalSurface> impl);
 
   FML_DISALLOW_COPY_AND_ASSIGN(TestMetalSurface);
 };

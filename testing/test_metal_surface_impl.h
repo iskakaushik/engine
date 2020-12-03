@@ -13,14 +13,21 @@ namespace flutter {
 
 class TestMetalSurfaceImpl : public TestMetalSurface {
  public:
-  TestMetalSurfaceImpl(TestMetalContext& test_metal_context,
+  TestMetalSurfaceImpl(const TestMetalContext& test_metal_context,
+                       const SkISize& surface_size);
+
+  TestMetalSurfaceImpl(const TestMetalContext& test_metal_context,
+                       int64_t texture_id,
                        const SkISize& surface_size);
 
   // |TestMetalSurface|
   ~TestMetalSurfaceImpl() override;
 
  private:
-  TestMetalContext& test_metal_context_;
+  void Init(const TestMetalContext::TextureInfo& texture_info,
+            const SkISize& surface_size);
+
+  const TestMetalContext& test_metal_context_;
   bool is_valid_ = false;
   sk_sp<SkSurface> surface_;
 
@@ -33,6 +40,7 @@ class TestMetalSurfaceImpl : public TestMetalSurface {
   // |TestMetalSurface|
   sk_sp<SkSurface> GetSurface() const override;
 
+  // |TestMetalSurface|
   sk_sp<SkImage> GetRasterSurfaceSnapshot() override;
 
   FML_DISALLOW_COPY_AND_ASSIGN(TestMetalSurfaceImpl);

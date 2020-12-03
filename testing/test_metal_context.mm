@@ -5,6 +5,7 @@
 #include "flutter/testing/test_metal_context.h"
 
 #include <Metal/Metal.h>
+#include <iostream>
 
 #include "flutter/fml/logging.h"
 #include "flutter/fml/platform/darwin/scoped_nsobject.h"
@@ -89,20 +90,36 @@ TestMetalContext::TextureInfo TestMetalContext::CreateMetalTexture(const SkISize
     return {.texture_id = -1, .texture = nullptr};
   }
 
-  textures_[texture_id_ctr_++] = texture;
+  const int64_t texture_id = texture_id_ctr_++;
+  textures_[texture_id] = texture;
+  std::cout << "inserting texture with id: " << texture_id << std::endl;
+
   return {
-      .texture_id = static_cast<int64_t>(textures_.size()) - 1,
+      .texture_id = texture_id,
       .texture = texture.get(),
   };
 }
 
+// Don't remove the texture from the map here.
 bool TestMetalContext::Present(int64_t texture_id) {
   std::scoped_lock lock(textures_mutex);
   if (textures_.find(texture_id) == textures_.end()) {
     return false;
   } else {
-    textures_.erase(texture_id);
     return true;
+  }
+}
+
+TestMetalContext::TextureInfo TestMetalContext::GetTextureInfo(int64_t texture_id) {
+  std::scoped_lock lock(textures_mutex);
+  if (textures_.find(texture_id) == textures_.end()) {
+    FML_CHECK(false) << "Invalid texture id: " << texture_id;
+    return {.texture_id = -1, .texture = nullptr};
+  } else {
+    return {
+        .texture_id = texture_id,
+        .texture = textures_[texture_id].get(),
+    };
   }
 }
 

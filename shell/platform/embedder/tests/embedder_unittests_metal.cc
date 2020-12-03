@@ -43,7 +43,7 @@ TEST_F(EmbedderTest, CanRenderGradientWithMetal) {
   ASSERT_EQ(FlutterEngineSendWindowMetricsEvent(engine.get(), &event),
             kSuccess);
 
-  ASSERT_TRUE(ImageMatchesFixture("gradient.png", renderered_scene));
+  ASSERT_TRUE(ImageMatchesFixture("gradient_metal.png", renderered_scene));
 }
 
 }  // namespace testing

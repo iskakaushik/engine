@@ -6,6 +6,8 @@
 
 #include <memory>
 
+#include "flutter/fml/logging.h"
+
 namespace flutter {
 namespace testing {
 
@@ -17,9 +19,8 @@ EmbedderTestContextMetal::EmbedderTestContextMetal(std::string assets_path)
 EmbedderTestContextMetal::~EmbedderTestContextMetal() {}
 
 void EmbedderTestContextMetal::SetupSurface(SkISize surface_size) {
-  FML_CHECK(!metal_surface_);
-  metal_surface_ =
-      TestMetalSurface::Create(*metal_context_.get(), surface_size);
+  FML_CHECK(surface_size_.isEmpty());
+  surface_size_ = surface_size;
 }
 
 size_t EmbedderTestContextMetal::GetSurfacePresentCount() const {
@@ -35,8 +36,11 @@ TestMetalContext* EmbedderTestContextMetal::GetTestMetalContext() {
 }
 
 bool EmbedderTestContextMetal::Present(int64_t texture_id) {
-  FireRootSurfacePresentCallbackIfPresent(
-      [&]() { return metal_surface_->GetRasterSurfaceSnapshot(); });
+  FireRootSurfacePresentCallbackIfPresent([&]() {
+    auto metal_surface_ =
+        TestMetalSurface::Create(*metal_context_, texture_id, surface_size_);
+    return metal_surface_->GetRasterSurfaceSnapshot();
+  });
   return metal_context_->Present(texture_id);
 }
 
