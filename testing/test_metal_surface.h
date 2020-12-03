@@ -33,6 +33,8 @@ class TestMetalSurface {
 
   virtual sk_sp<SkSurface> GetSurface() const;
 
+  virtual sk_sp<SkImage> GetRasterSurfaceSnapshot();
+
  protected:
   TestMetalSurface();
 

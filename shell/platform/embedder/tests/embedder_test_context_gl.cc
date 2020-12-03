@@ -55,11 +55,7 @@ bool EmbedderTestContextGL::GLPresent(uint32_t fbo_id) {
   FireRootSurfacePresentCallbackIfPresent(
       [&]() { return gl_surface_->GetRasterSurfaceSnapshot(); });
 
-  if (!gl_surface_->Present()) {
-    return false;
-  }
-
-  return true;
+  return gl_surface_->Present();
 }
 
 void EmbedderTestContextGL::SetGLGetFBOCallback(GLGetFBOCallback callback) {

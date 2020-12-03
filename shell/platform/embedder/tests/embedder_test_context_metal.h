@@ -24,6 +24,8 @@ class EmbedderTestContextMetal : public EmbedderTestContext {
   // |EmbedderTestContext|
   void SetupCompositor() override;
 
+  bool Present(int64_t texture_id);
+
   TestMetalContext* GetTestMetalContext();
 
  private:

@@ -69,6 +69,36 @@ TestMetalSurfaceImpl::TestMetalSurfaceImpl(TestMetalContext& test_metal_context,
   is_valid_ = true;
 }
 
+sk_sp<SkImage> TestMetalSurfaceImpl::GetRasterSurfaceSnapshot() {
+  if (!IsValid()) {
+    return nullptr;
+  }
+
+  if (!surface_) {
+    FML_LOG(ERROR) << "Aborting snapshot because of on-screen surface "
+                      "acquisition failure.";
+    return nullptr;
+  }
+
+  auto device_snapshot = surface_->makeImageSnapshot();
+
+  if (!device_snapshot) {
+    FML_LOG(ERROR) << "Could not create the device snapshot while attempting "
+                      "to snapshot the Metal surface.";
+    return nullptr;
+  }
+
+  auto host_snapshot = device_snapshot->makeRasterImage();
+
+  if (!host_snapshot) {
+    FML_LOG(ERROR) << "Could not create the host snapshot while attempting to "
+                      "snapshot the Metal surface.";
+    return nullptr;
+  }
+
+  return host_snapshot;
+}
+
 // |TestMetalSurface|
 TestMetalSurfaceImpl::~TestMetalSurfaceImpl() = default;
 

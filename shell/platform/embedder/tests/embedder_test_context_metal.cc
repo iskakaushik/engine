@@ -10,8 +10,9 @@ namespace flutter {
 namespace testing {
 
 EmbedderTestContextMetal::EmbedderTestContextMetal(std::string assets_path)
-    : EmbedderTestContext(assets_path),
-      metal_context_(std::make_unique<TestMetalContext>()) {}
+    : EmbedderTestContext(assets_path) {
+  metal_context_ = std::make_unique<TestMetalContext>();
+}
 
 EmbedderTestContextMetal::~EmbedderTestContextMetal() {}
 
@@ -31,6 +32,12 @@ void EmbedderTestContextMetal::SetupCompositor() {
 
 TestMetalContext* EmbedderTestContextMetal::GetTestMetalContext() {
   return metal_context_.get();
+}
+
+bool EmbedderTestContextMetal::Present(int64_t texture_id) {
+  FireRootSurfacePresentCallbackIfPresent(
+      [&]() { return metal_surface_->GetRasterSurfaceSnapshot(); });
+  return metal_context_->Present(texture_id);
 }
 
 }  // namespace testing

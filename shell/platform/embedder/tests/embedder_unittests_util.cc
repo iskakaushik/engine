@@ -94,6 +94,8 @@ bool ImageMatchesFixture(const std::string& fixture_file_name,
   FML_CHECK(fixture_image) << "Could not create image from fixture: "
                            << fixture_file_name;
 
+  FML_CHECK(scene_image) << "Invalid scene image.";
+
   auto scene_image_subset = scene_image->makeSubset(
       SkIRect::MakeWH(fixture_image->width(), fixture_image->height()));
 

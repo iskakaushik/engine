@@ -73,6 +73,7 @@ EmbedderConfigBuilder::EmbedderConfigBuilder(
 
 #ifdef SHELL_ENABLE_METAL
   InitializeMetalRendererConfig();
+  std::cout << "yo init metal done!" << std::endl;
 #endif
 
   software_renderer_config_.struct_size = sizeof(FlutterSoftwareRendererConfig);
@@ -380,6 +381,11 @@ void EmbedderConfigBuilder::InitializeMetalRendererConfig() {
   metal_renderer_config_.struct_size = sizeof(metal_renderer_config_);
   EmbedderTestContextMetal& metal_context =
       reinterpret_cast<EmbedderTestContextMetal&>(context_);
+
+  if (!metal_context.GetTestMetalContext()) {
+    return;
+  }
+
   metal_renderer_config_.device =
       metal_context.GetTestMetalContext()->GetMetalDevice();
   metal_renderer_config_.command_queue =
@@ -402,7 +408,7 @@ void EmbedderConfigBuilder::InitializeMetalRendererConfig() {
                                                int64_t texture_id) -> bool {
     EmbedderTestContextMetal* metal_context =
         reinterpret_cast<EmbedderTestContextMetal*>(user_data);
-    return metal_context->GetTestMetalContext()->Present(texture_id);
+    return metal_context->Present(texture_id);
   };
 }
 

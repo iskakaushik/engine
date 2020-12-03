@@ -5,6 +5,7 @@
 #include "flutter/testing/test_metal_surface.h"
 
 #if TESTING_ENABLE_METAL
+#include "flutter/fml/logging.h"
 #include "flutter/testing/test_metal_surface_impl.h"
 #endif  // TESTING_ENABLE_METAL
 
@@ -43,6 +44,10 @@ sk_sp<GrDirectContext> TestMetalSurface::GetGrContext() const {
 
 sk_sp<SkSurface> TestMetalSurface::GetSurface() const {
   return impl_ ? impl_->GetSurface() : nullptr;
+}
+
+sk_sp<SkImage> TestMetalSurface::GetRasterSurfaceSnapshot() {
+  return impl_ ? impl_->GetRasterSurfaceSnapshot() : nullptr;
 }
 
 }  // namespace flutter

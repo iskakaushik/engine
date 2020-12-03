@@ -33,6 +33,8 @@ class TestMetalSurfaceImpl : public TestMetalSurface {
   // |TestMetalSurface|
   sk_sp<SkSurface> GetSurface() const override;
 
+  sk_sp<SkImage> GetRasterSurfaceSnapshot() override;
+
   FML_DISALLOW_COPY_AND_ASSIGN(TestMetalSurfaceImpl);
 };
 
