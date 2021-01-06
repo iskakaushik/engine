@@ -87,6 +87,15 @@ bool RasterImagesAreSame(sk_sp<SkImage> a, sk_sp<SkImage> b) {
   return ::memcmp(pixmapA.addr(), pixmapB.addr(), sizeA) == 0;
 }
 
+void WriteBase64PngToStdout(std::string image_label, sk_sp<SkImage> image) {
+  sk_sp<SkData> data = image->encodeToData();
+  size_t b64_size = SkBase64::Encode(data->data(), data->size(), nullptr);
+  char b64_data[b64_size];
+  SkBase64::Encode(data->data(), data->size(), b64_data);
+  std::cout << "Base64 png of " << image_label << std::endl;
+  std::cout << b64_data << std::endl;
+}
+
 bool WriteImageToDisk(const fml::UniqueFD& directory,
                       const std::string& name,
                       sk_sp<SkImage> image) {
@@ -149,6 +158,9 @@ bool ImageMatchesFixture(const std::string& fixture_file_name,
 
     FML_CHECK(WriteImageToDisk(fixtures_fd, expect_file_name, fixture_image))
         << "Could not write file to disk: " << expect_file_name;
+
+    WriteBase64PngToStdout("Expected Image", fixture_image);
+    WriteBase64PngToStdout("Actual Image", scene_image_subset);
 
     FML_LOG(ERROR) << "Image did not match expectation." << std::endl
                    << "Expected:"

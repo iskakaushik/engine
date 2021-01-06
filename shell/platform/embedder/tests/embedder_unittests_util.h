@@ -17,6 +17,7 @@
 #include "flutter/shell/platform/embedder/tests/embedder_config_builder.h"
 #include "flutter/shell/platform/embedder/tests/embedder_test.h"
 #include "third_party/skia/include/core/SkSurface.h"
+#include "third_party/skia/include/utils/SkBase64.h"
 
 namespace flutter {
 namespace testing {
@@ -25,6 +26,8 @@ sk_sp<SkSurface> CreateRenderSurface(const FlutterLayer& layer,
                                      GrDirectContext* context);
 
 bool RasterImagesAreSame(sk_sp<SkImage> a, sk_sp<SkImage> b);
+
+void WriteBase64PngToStdout(std::string image_label, sk_sp<SkImage> image);
 
 bool WriteImageToDisk(const fml::UniqueFD& directory,
                       const std::string& name,
